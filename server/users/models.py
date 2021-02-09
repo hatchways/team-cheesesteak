@@ -2,8 +2,7 @@ import re
 from sqlalchemy import (
     Column, String,
     Integer, ForeignKey,
-    Boolean, ManyToMany,
-    create_engine, exists
+    Boolean, create_engine
     )
 from sqlalchemy.orm import (
     relationship, sessionmaker,
@@ -24,7 +23,6 @@ Base = declarative_base()
 # Temporary engine for local testing
 # To be replaced with actual engine
 engine = create_engine("sqlite:///:memory:", echo=True)
-Session = sessionmaker(bind=engine)
 
 class User(Base):
     __tablename__ = "user"
