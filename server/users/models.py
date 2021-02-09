@@ -29,11 +29,6 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
 
-    # General Info
-    first_name = Column(String(50), nullable=False)
-    last_name = Column(String(50), nullable=False)
-    is_chef = Column(Boolean, default=False)
-
     # Split up the address to make finding location radius easier
     # Also makes displaying info easier
     street_address = Column(String(30), nullable=False)
@@ -74,12 +69,10 @@ class User(Base):
 
     @staticmethod
     def create(
-            first_name, last_name,
             username, email,
             street_address, city,
             state_or_province, country,
-            zip_code, is_chef,
-            password
+            zip_code, password
         ):
         """
         Create a new user in the database and return the newly created instance
@@ -102,11 +95,10 @@ class User(Base):
 
         # Create user object
         user_instance = User(
-            first_name, last_name,
             username, email,
             street_address, city,
             state_or_province, country,
-            zip_code, is_chef
+            zip_code
         )
         # Set the new instances password hash
         user_instance.set_password(password)
@@ -162,11 +154,7 @@ class User(Base):
     # Properties
 
     @property
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}"
-
-    @property
-    def full_address(self):
+    def get_full_address(self):
         """
         Return a full address for the user such as...
         123 Main Street, Columbus, Ohio, United States, 45796
@@ -174,7 +162,7 @@ class User(Base):
         return f"{self.street_and_city}, {self.state_or_province}, {self.country}, {self.zip_code}"
 
     @property
-    def street_and_city(self):
+    def get_street_and_city(self):
         """
         Return only the street address and city such as...
         123 Main Street, Columbus
@@ -182,7 +170,7 @@ class User(Base):
         return f"{self.street_address}, {self.city}"
     
     @property
-    def city_and_province(self):
+    def get_city_and_province(self):
         """
         Return only the city and state/province such as...
         Columbus, Ohio
@@ -190,7 +178,7 @@ class User(Base):
         return f"{self.city}, {self.state_or_province}"
 
     @property
-    def province_and_country(self):
+    def get_province_and_country(self):
         """
         Return only the state/province and country such as...
         Ohio, United States
@@ -218,22 +206,6 @@ class User(Base):
         if not re.match("[^@]+@[^@]+\.[^@]+", email):
             raise AssertionError('Provided email is not an email address')
         return email
-
-    @validates('first_name')
-    def validate_first_name(self, key, first_name):
-        if not first_name or not first_name.is_alpha():
-            raise AssertionError('First name not provided')
-        if len(first_name) < 3 or len(first_name) > 50:
-            raise AssertionError('First name must be between 3 and 50 characters')
-        return first_name
-
-    @validates('last_name')
-    def validate_last_name(self, key, last_name):
-        if not last_name or not last_name.is_alpha():
-            raise AssertionError("Last name not provided")
-        if len(last_name) < 3 or len(last_name) > 50:
-            raise AssertionError('Last name must be between 3 and 50 characters')
-        return last_name
 
     @validates('street_address')
     def validate_street_address(self, key, street_address):
@@ -285,5 +257,4 @@ class User(Base):
             raise AssertionError("Zip code must be between 5 and 12 characters")
 
     def __repr__(self):
-        return "<User(username='%s', fullname='%s')>" % (
-            self.username, self.fullname)
+        return "<User(username='%s')>" % (self.username)
