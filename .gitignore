@@ -23,7 +23,6 @@ __pycache__/
 instance/
 .webassets-cache
 
-Landing.js
 # PyCharm
 .idea/
 

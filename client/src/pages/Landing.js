@@ -10,7 +10,7 @@ const landinPageStyle = theme => ({
   landingContainer: {
     margin: theme.spacing.unit * 2
   }
-});
+}); 
 
 class LandingPage extends Component {
   state = {
