@@ -15,16 +15,13 @@ from werkzeug.security import (
     )
 
 # from .database.db import engine
-from .utility import sqlalchemy_utils
+from db import session
+from base_model import BaseModelMixin
 
 # Base model the other model(s) will subclass
 Base = declarative_base()
 
-# Temporary engine for local testing
-# To be replaced with actual engine
-engine = create_engine("sqlite:///:memory:", echo=True)
-
-class User(Base):
+class User(Base, BaseModelMixin):
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True)
@@ -75,6 +72,8 @@ class User(Base):
             zip_code, password
         ):
         """
+        I'm over riding the BaseModelMixin create method because of how the
+        password is set.
         Create a new user in the database and return the newly created instance
 
         WARNING
@@ -90,9 +89,6 @@ class User(Base):
         except:
             return {'message': "Uncaught exception"}
         """
-        # Create a clean session
-        session = sessionmaker(bind=engine)
-
         # Create user object
         user_instance = User(
             username, email,
@@ -121,35 +117,6 @@ class User(Base):
         if not user:
             raise NoResultFound(f"User with username {username} does not exist")
         return user
-
-    @staticmethod
-    def update(user_id, **new_info):
-        """
-        WARNING
-        This will NOT work if updating a relationship.
-        See the comments in the following SO post
-        https://stackoverflow.com/questions/23152337/how-to-update-sqlalchemy-orm-object-by-a-python-dict
-
-        Get a user object from the database matching the id
-        then use the kwargs to update its fields
-        """
-        session = Session(bind=engine)
-        user = session.query(User).get(user_id)
-        for key, value in new_info.items():
-            setattr(user, key, value)
-        session.commit()
-
-    @staticmethod
-    def delete(user_id):
-        """
-        Retrieve and delete a user instance from the database
-        Also delete any and all connections to and from the user
-        """
-        # get_instance() will raise a NoResultFound error if the user doesn't exist
-        user = sqlalchemy_utils.get_instance(User, **{'id': user_id})
-        session = Session(bind=engine)
-        session.delete(user)
-        session.commit()
 
     # Properties
 
