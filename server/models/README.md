@@ -45,3 +45,26 @@ This will over ride the base create method and your defined method will be calle
 ```instance_exists(**info)``` - Takes in a dictionary of information to filter the table by and if it finds at least one instance with the passed information, it will return True; otherwise it will return False.
 
 ```get_instance(multiple=False, **info)``` - Filters through the table using the passed info dictionary to find matching instance(s). By default 'multiple' is False so this will return only one instance (if one is found). If you would like all matching records, pass in multiple=True and you'll be returned all instances that were found.
+
+```to_dict(includes=[], excludes=[])``` - **WARNING** This method MUST be called from an instance (refer to the example below). <br>This loops through the attributes of an instance and returns a dictionary where its keys are the names of the fields and values are the values assigned to said fields. If you pass a list to 'includes' it will get all values associated with the fields in the "includes" list. If you pass a list of fields to exclude in the "excludes" list, this will get **ALL** fields and values except what you passed in to the excludes list. If you don't pass either, this method will return **ALL** fields and values in dictionary form.
+
+
+**For Clarification** - includes and excludes both accept fields that are in the model. If a field in one of these lists does not exist in the model, this will raise an AttributeError that will tell you which field doesn't exist in the model.
+
+
+##### to_dict(includes=[], excludes=[]) Example
+```
+# Using the User model as an example. 
+# Assume the user has a street address of "123 Random Street" and a city of "Ontario"
+
+# Get the instance from the database
+user = User.get_instance(**{"name": "Alexander"})
+info_dict = user.to_dict(includes=['name', 'street_address', 'city'])
+
+# The return would be
+{
+    'name': 'Alexander',
+    'street_address': '123 Random Street',
+    'city': "Ontario"
+}
+```
