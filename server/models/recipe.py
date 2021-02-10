@@ -143,3 +143,13 @@ class Recipe(Base, BaseModelMixin):
         # (if it was added to the profile) being used in the profile model.
         # This needs tested though
         return self.chef_profile
+<<<<<<< Updated upstream
+=======
+
+    def __repr__(self):
+        """
+        self.chef_profile.user.name SHOULD yield the name of the user that
+        owns the profile associated with this recipe but needs tested
+        """
+        return "<Recipe(chef='%s', name=%s)>" % (self.chef_profile.user.username, self.name)
+>>>>>>> Stashed changes
