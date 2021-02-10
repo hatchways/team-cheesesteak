@@ -23,7 +23,7 @@ class Recipe(Base, BaseModelMixin):
     - required_items -- A list of required utensils to be converted to a string
         then back to a list when recipe.get_utensil_list is called
     
-    - image_links -- A list of image urls to be converted to a string
+    - image_urls -- A list of image urls to be converted to a string
         then back to a list when recipe.get_image_link_list is called
         This will gaurentee positions in case images are ordered
         in a certain way for a gallery as well as preventing the need
@@ -50,12 +50,12 @@ class Recipe(Base, BaseModelMixin):
     description = Column(Text, nullable=False)
     available = Column(Boolean, nullable=False)
     cuisine = Column(String, nullable=False)
-    price = Column(Float, nullable=False)
+    price = Column(Integer, nullable=False)
 
     # These store lists as strings in CSV format
     ingredients = Column(Text, nullable=False)
     required_items = Column(Text, nullable=False)
-    image_links = Column(Text, nullable=False)
+    image_urls = Column(Text, nullable=False)
 
     # TODO Validation for cuisine which 
     # requires a predefined list of cuisines
@@ -64,39 +64,34 @@ class Recipe(Base, BaseModelMixin):
 
     @validates('price')
     def validate_price(self, key, price):
-        if not isinstance(price, float):
-            # Try to convert it to a float
-            try:
-                float_price = float(price)
-                # Reassign price to be the float version
-                price = float_price
-            except:
-                raise ValueError(f"Expected a price as an integer or float but got {type(price)}")
-        return price
+        if not isinstance(price, int):
+            raise AssertionError(f"Expected price to be of type integer but got {type(price)}")
+        new_price = price * 100
+        return new_price
 
-    @validates('image_links')
-    def validate_image_links(self, key, image_links):
+    @validates('image_urls')
+    def validate_image_urls(self, key, image_urls):
         """
         Make sure we were passed a list
         Convert it to a string and return it
         """
-        if not isinstance(image_links, list):
-            raise AssertionError(f"Expected image_links to be of type list but got {type(image_links)}")
-        stringified_links = ",".join(link for link in image_links)
-        return stringified_links
+        if not isinstance(image_urls, list):
+            raise AssertionError(f"Expected field 'image_urls' to be of type list but got {type(image_urls)}")
+        stringified_urls = ",".join(image_urls)
+        return stringified_urls
 
     @validates('ingredients')
     def validate_ingredients(self, key, ingredients):
         if not isinstance(ingredients, list):
-            raise AssertionError(f"Expected ingredients to be of type list but got {type(ingredients)}")
-        stringified_ingredients = ",".join(ingredient for ingredient in ingredients)
+            raise AssertionError(f"Expected field 'ingredients' to be of type list but got {type(ingredients)}")
+        stringified_ingredients = ",".join(ingredients)
         return stringified_ingredients
 
     @validates('required_items')
     def validate_required_items(self, key, required_items):
         if not isinstance(required_items, list):
-            raise AssertionError(f"Expected required_items to be of type list but got {type(required_items)}")
-        stringified_required_items = ",".join(item for item in required_items)
+            raise AssertionError(f"Expected field 'required_items' to be of type list but got {type(required_items)}")
+        stringified_required_items = ",".join(required_items)
         return stringified_required_items
 
     @validates('available')
@@ -107,16 +102,27 @@ class Recipe(Base, BaseModelMixin):
         true Boolean.
         """
         if not isinstance(available, bool):
-            raise AssertionError(f"Expected available to be a boolean but got {type(available)}")
+            raise AssertionError(f"Expected field 'available' to be a boolean but got {type(available)}")
         return available
 
     @property
-    def get_formatted_price(self):
-        return f"${self.price}"
+    def get_price(self):
+        """
+        Just in case someone doesn't want the formatted
+        price, give back the stored price divided by 100
+        """
+        return self.price / 100
 
     @property
-    def get_image_link_list(self):
-        return self.image_links.split(',')
+    def get_formatted_price(self):
+        """
+        For use in displaying a price in $19.26 format to a user
+        """
+        return f"${self.get_price}"
+
+    @property
+    def get_image_url_list(self):
+        return self.image_urls.split(',')
 
     @property
     def get_ingredient_list(self):
