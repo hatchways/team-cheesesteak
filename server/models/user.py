@@ -16,7 +16,7 @@ from werkzeug.security import (
 
 # from .database.db import engine
 from db import session
-from utility.base_model import BaseModelMixin
+from base_model import BaseModelMixin
 
 # Base model the other model(s) will subclass
 Base = declarative_base()
@@ -72,6 +72,8 @@ class User(Base, BaseModelMixin):
             zip_code, password
         ):
         """
+        I'm over riding the BaseModelMixin create method because of how the
+        password is set.
         Create a new user in the database and return the newly created instance
 
         WARNING
@@ -87,9 +89,6 @@ class User(Base, BaseModelMixin):
         except:
             return {'message': "Uncaught exception"}
         """
-        # Create a clean session
-        session = sessionmaker(bind=engine)
-
         # Create user object
         user_instance = User(
             username, email,
