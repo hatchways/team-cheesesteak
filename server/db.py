@@ -13,7 +13,7 @@ username = ""
 password = ""
 port = ""
 db_name = ""
-db_string = f"postgresql+psycopg2://{username}:{password}}@localhost:{port}/{db_name}"
+db_string = "postgresql+psycopg2://%s:%s@localhost:%s/%s" % (user, password, port, db_name)
 engine = create_engine(db_string, echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
