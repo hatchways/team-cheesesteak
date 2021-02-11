@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { Typography } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { Route, Link } from "react-router-dom";
+import Container from '@material-ui/core/Container';
 
 import Ping from "./Ping";
 
@@ -41,7 +42,7 @@ class LandingPage extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.landingContainer}>
+      <Container>
         <Typography>{this.state.welcomeMessage}</Typography>
         {this.state.step >= 1 && (
           <React.Fragment>
@@ -63,7 +64,7 @@ class LandingPage extends Component {
         {this.state.step >= 3 && (
           <Typography>All done! Now go make a pull request!</Typography>
         )}
-      </div>
+      </Container>
     );
   }
 }

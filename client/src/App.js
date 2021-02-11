@@ -4,14 +4,22 @@ import { BrowserRouter, Route } from "react-router-dom";
 
 import { theme } from "./themes/theme";
 import LandingPage from "./pages/Landing";
+import ChefPage from "./pages/Chef";
+import ProfilePage from "./pages/Profile";
 
 import "./App.css";
+
+// import TopBar from "./component/TopBar";
+import Auth from "./component/Auth";
 
 function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
-        <Route path="/" component={LandingPage} />
+        <Auth />
+        <Route exact path="/" component={LandingPage} />
+        <Route path="/chef" component={ChefPage} />
+        <Route path="/profile" component={ProfilePage} />
       </BrowserRouter>
     </MuiThemeProvider>
   );
