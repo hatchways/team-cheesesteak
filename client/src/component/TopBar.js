@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -41,13 +41,14 @@ const useStyles = makeStyles((theme) => ({
 export default function TopBar(props) {
 
 	const classes = useStyles();
-	const user = props.user
-	const [auth, setAuth] = React.useState(user);
-	const [anchorEl, setAnchorEl] = React.useState(null);
+	const userRole = props.user.role
+	console.log('props.user',props.user);
+	const [auth, setAuth] = useState(userRole);
+	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 
 	const routes = ['chef']
-	const [state, setState] = React.useState({
+	const [top, setTop] = useState({
 		top: false,
 	});
 	const handleAuth = (event) => {
@@ -67,7 +68,7 @@ export default function TopBar(props) {
 			return;
 		}
 
-		setState({ ...state, 'top': open });
+		setTop({ ...top, 'top': open });
 	};
 
 
@@ -139,7 +140,7 @@ export default function TopBar(props) {
 
 					<Drawer
 						anchor={"top"}
-						open={state["top"]}
+						open={top["top"]}
 						onClose={toggleDrawer("top", false)}
 					>
 						{list(routes)}

@@ -4,12 +4,11 @@ import { BrowserRouter, Route } from "react-router-dom";
 
 import { theme } from "./themes/theme";
 import LandingPage from "./pages/Landing";
-import ChefPage from "./pages/Chef";
-import ProfilePage from "./pages/Profile";
+// import ChefPage from "./pages/Chef";
+// import ProfilePage from "./pages/Profile";
 
 import "./App.css";
 
-// import TopBar from "./component/TopBar";
 import Auth from "./component/Auth";
 
 function App() {
@@ -18,8 +17,8 @@ function App() {
       <BrowserRouter>
         <Auth />
         <Route exact path="/" component={LandingPage} />
-        <Route path="/chef" component={ChefPage} />
-        <Route path="/profile" component={ProfilePage} />
+        {/* <Route path="/chef" component={ChefPage} />
+        <Route path="/profile" component={ProfilePage} /> */}
       </BrowserRouter>
     </MuiThemeProvider>
   );
