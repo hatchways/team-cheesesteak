@@ -148,3 +148,39 @@ class BaseModelMixin(object):
         instance = cls.get_instance(**{'id': id})
         session.delete(instance)
         session.commit()
+
+    def to_dict(self, includes=[], excludes=[]):
+        """
+        WARNING
+        This is to be called from an existing instance so it has
+        access to existing values
+
+
+        Take in a list of fields, if get_instance is True, get id
+        from the kwargs and use cls.get_instance to get the instance
+        or raise an Exception then serialize the fields and values
+        where the key is the field and the value is the value in said field
+        """
+        serialized_fields = {}
+        # Get all field if includes is empty
+        if len(includes) == 0:
+            for field in dir(self):
+                # Ignore dunder methods, private attributes and anything
+                # inside the excludes array
+                if "_" in field or field in excludes:
+                    continue
+                # Make sure the class has the attribute
+                try:
+                    serialized_fields[field] = getattr(self, field)
+                except AttributeError:
+                    raise AttributeError("Tried to get field %s but %s doesn't exist") % (field, field)
+            return serialized_fields
+
+        # Get only the fields that were included
+        elif len(includes) > 0:
+            for field in includes:
+                try:
+                    serialized_fields[field] = getattr(self, field)
+                except AttributeError:
+                    raise AttributeError("Tried to get field %s but %s doesn't exist") % (field, field)
+            return serialized_fields
