@@ -29,26 +29,12 @@ class BaseModelMixin(object):
         """
         serialized_fields = {}
         # Get all fields if neither excludes or includes is passed
-        if len(includes) == 0 and len(excludes) == 0:
+        if len(includes) == 0:
             for field in dir(self):
                 # Ignore dunder methods or private attributes
-                if "_" in  field:
-                    continue
-                # Make sure the class has the attribute
-                try:
-                    serialized_fields[field] = getattr(self, field)
-                except AttributeError:
-                    raise AttributeError("Tried to get field %s but %s doesn't exist") % (field, field)
-                except:
-                    raise Exception("Uncaught exception in %s to_dict()" % (self))
-            return serialized_fields
-
-        # Get all fields except what was excluded
-        elif len(excludes) > 0:
-            for field in dir(self):
-                # Continue if the field is to be excluded
                 if "_" in field or field in excludes:
                     continue
+                # Make sure the class has the attribute
                 try:
                     serialized_fields[field] = getattr(self, field)
                 except AttributeError:
