@@ -106,19 +106,12 @@ class Recipe(Base, BaseModelMixin):
         return available
 
     @property
-    def get_price(self):
-        """
-        Just in case someone doesn't want the formatted
-        price, give back the stored price divided by 100
-        """
-        return self.price / 100
 
-    @property
     def get_formatted_price(self):
         """
         For use in displaying a price in $19.26 format to a user
         """
-        return f"${self.get_price}"
+        return f"${self.price/100}"
 
     @property
     def get_image_url_list(self):
@@ -143,8 +136,6 @@ class Recipe(Base, BaseModelMixin):
         # (if it was added to the profile) being used in the profile model.
         # This needs tested though
         return self.chef_profile
-<<<<<<< Updated upstream
-=======
 
     def __repr__(self):
         """
@@ -152,4 +143,3 @@ class Recipe(Base, BaseModelMixin):
         owns the profile associated with this recipe but needs tested
         """
         return "<Recipe(chef='%s', name=%s)>" % (self.chef_profile.user.username, self.name)
->>>>>>> Stashed changes
