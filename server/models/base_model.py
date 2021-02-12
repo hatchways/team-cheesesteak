@@ -1,6 +1,7 @@
+from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base, declared_attr, as_declarative
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.ext.declarative import declarative_base
 from db import session
 # Base model the other model(s) will subclass
 Base = declarative_base()
@@ -18,8 +19,6 @@ class BaseModelMixin(object):
         WARNING
         This is to be called from an existing instance so it has
         access to existing values
-
-
         Take in a list of includes and/or excludes then return a
         dictionary of fields and values. If includes is passed but
         not excludes, it will return all fields that were in includes.
@@ -30,22 +29,10 @@ class BaseModelMixin(object):
         serialized_fields = {}
         # Get all fields if neither excludes or includes is passed
         if len(includes) == 0:
-            for field in dir(self):
-                # Ignore dunder methods or private attributes
-                if "_" in field or field in excludes:
+            for field in self.__get_fields():
+                if field in excludes:
                     continue
                 # Make sure the class has the attribute
-                try:
-                    serialized_fields[field] = getattr(self, field)
-                except AttributeError:
-                    raise AttributeError("Tried to get field %s but %s doesn't exist") % (field, field)
-                except:
-                    raise Exception("Uncaught exception in %s to_dict()" % (self))
-            return serialized_fields
-
-        # Get only the fields that were included
-        elif len(includes) > 0:
-            for field in includes:
                 try:
                     serialized_fields[field] = getattr(self, field)
                 except AttributeError:
@@ -134,3 +121,16 @@ class BaseModelMixin(object):
         instance = cls.get_instance(**{'id': id})
         session.delete(instance)
         session.commit()
+
+
+    @classmethod
+    def __get_fields(cls):
+        """
+        Get all the names used for the columns in the model definition
+        then append them to a list and return them
+        """
+        fields = []
+        mapper = inspect(cls)
+        for field in mapper.attrs:
+            fields.append(field.key)
+        return fields
