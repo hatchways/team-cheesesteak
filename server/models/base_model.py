@@ -27,7 +27,7 @@ class BaseModelMixin(object):
         If neither are passed, it will return ALL fields and values in the model
         """
         serialized_fields = {}
-        # Get all fields if neither excludes or includes is passed
+        # Get all fields if includes is not passed
         if len(includes) == 0:
             for field in self.__get_fields():
                 if field in excludes:
@@ -40,6 +40,19 @@ class BaseModelMixin(object):
                 except:
                     raise Exception("Uncaught exception in %s to_dict()" % (self))
             return serialized_fields
+            
+        # Get only the fields provided in the includes list
+        for field in includes:
+            if field in excludes:
+                continue
+            # Make sure the class has the attribute
+            try:
+                serialized_fields[field] = getattr(self, field)
+            except AttributeError:
+                raise AttributeError("Tried to get field %s but %s doesn't exist") % (field, field)
+            except:
+                raise Exception("Uncaught exception in %s to_dict()" % (self))
+        return serialized_fields
 
     @classmethod
     def instance_exists(cls, **info):
