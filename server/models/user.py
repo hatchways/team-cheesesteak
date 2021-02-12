@@ -16,19 +16,19 @@ from werkzeug.security import (
 
 # from .database.db import engine
 from db import session
-from base_model import BaseModelMixin
+from .base_model import BaseModelMixin
 
 # Base model the other model(s) will subclass
 Base = declarative_base()
 
 class User(Base, BaseModelMixin):
     __tablename__ = "user"
-
+    
     id = Column(Integer, primary_key=True)
 
     # Split up the address to make finding location radius easier
     # Also makes displaying info easier
-    street_address = Column(String(30), nullable=False)
+    street_address = Column(String(150), nullable=False)
     city = Column(String(30), nullable=False)
     state_or_province = Column(String(30), nullable=False)
     country = Column(String(30), nullable=False)
@@ -41,7 +41,24 @@ class User(Base, BaseModelMixin):
 
     # Relationships
     # This requires the Profile model to link back to the user model
+    
     profile = relationship("Profile", uselist=False, back_populates="user")
+
+    def __init__(self, street_address,
+            city, state_or_province,
+            country, zip_code,
+            username, email,
+            password=None
+        ):
+        self.street_address = street_address
+        self.city = city
+        self.state_or_province = state_or_province
+        self.country = country
+        self.zip_code = zip_code
+        self.username = username
+        self.email = email
+        # Actually set after instantiation
+        self.password_hash = None
 
     def set_password(self, password):
         if not password:
@@ -58,11 +75,17 @@ class User(Base, BaseModelMixin):
     @staticmethod
     def credentials_match(username, password):
         """
+        First get the user by using the given username,
+        then use the user.
         Return True if the credentials are correct
         False otherwise
         """
         user = User.get_by_username(username)
-        return user.check_password(password)
+        # If the password is a match, return the user
+        # Otherwise return None
+        if user.check_password(password):
+            return user
+        return None
 
     @staticmethod
     def create(
@@ -82,6 +105,7 @@ class User(Base, BaseModelMixin):
         if one of the fields fails validation!
 
         Example
+        
         try:
             new_user = User.create(<args>)
         except AssertionError as e:
@@ -91,20 +115,20 @@ class User(Base, BaseModelMixin):
         """
         # Create user object
         user_instance = User(
-            username, email,
-            street_address, city,
-            state_or_province, country,
-            zip_code
+            username=username, email=email,
+            street_address=street_address, city=city,
+            state_or_province=state_or_province, country=country,
+            zip_code=zip_code
         )
         # Set the new instances password hash
         user_instance.set_password(password)
-
         # Add the new instance to pending SQL
         # Should automatically use the validation functions to validate fields
         session.add(user_instance)
         # Perform a query for the new user so the pending SQL
         # is committed and we get the newly created User
-        user = session.query(User).filter(User.email == email).first()
+        session.commit()
+        user = session.query(User).filter(User.username == username).first()
         # Return the complete object
         return user
 
@@ -113,7 +137,7 @@ class User(Base, BaseModelMixin):
         """
         Return a user instance or raise a NoResultFound exception
         """
-        user = User.query.filter(User.username == username).first()
+        user = session.query(User).filter(User.username == username).first()
         if not user:
             raise NoResultFound(f"User with username {username} does not exist")
         return user
@@ -126,7 +150,7 @@ class User(Base, BaseModelMixin):
         Return a full address for the user such as...
         123 Main Street, Columbus, Ohio, United States, 45796
         """
-        return f"{self.street_and_city}, {self.state_or_province}, {self.country}, {self.zip_code}"
+        return f"{self.get_street_and_city}, {self.state_or_province}, {self.country}, {self.zip_code}"
 
     @property
     def get_street_and_city(self):
@@ -158,7 +182,7 @@ class User(Base, BaseModelMixin):
     def validate_username(self, key, username):
         if not username:
             raise AssertionError('No username provided')
-        if sqlalchemy_utils.instance_exists(User, **{'username': username}):
+        if User.instance_exists(**{'username': username}):
             raise AssertionError('Username is already in use')
         if len(username) < 5 or len(username) > 50:
             raise AssertionError('Username must be between 5 and 20 characters')
@@ -168,7 +192,7 @@ class User(Base, BaseModelMixin):
     def validate_email(self, key, email):
         if not email:
             raise AssertionError('No email provided')
-        if sqlalchemy_utils.instance_exists(User, **{'email': email}):
+        if User.instance_exists(**{'email': email}):
             raise AssertionError("Email is already in use")
         if not re.match("[^@]+@[^@]+\.[^@]+", email):
             raise AssertionError('Provided email is not an email address')
@@ -184,7 +208,7 @@ class User(Base, BaseModelMixin):
 
     @validates('city')
     def validate_city(self, key, city):
-        if not city or not city.is_alpha():
+        if not city or not city.isalpha():
             raise AssertionError("City not provided")
         if len(city) < 5 or len(city) > 30:
             raise AssertionError("City must be between 5 and 30 characters")
@@ -192,15 +216,15 @@ class User(Base, BaseModelMixin):
 
     @validates('state_or_province')
     def validate_state_or_province(self, key, state_or_province):
-        if not state_or_province or not state_or_province.is_alpha():
+        if not state_or_province or not state_or_province.isalpha():
             raise AssertionError("State or Province not provided or contains non alphabetical characters")
-        if len(state_or_province) < 5 or len(state_or_province) > 30:
+        if len(state_or_province) < 3 or len(state_or_province) > 30:
             raise AssertionError("State or Province must be between 5 and 30 characters")
         return state_or_province
 
     @validates('country')
     def validate_country(self, key, country):
-        if not country or not country.is_alpha():
+        if not country or not country.isalpha():
             raise AssertionError("Country not provided or contains non alphabetical characters")
         elif len(country) < 5 or len(country) > 30:
             raise AssertionError("Country must be between 5 and 30 characters")
@@ -222,6 +246,7 @@ class User(Base, BaseModelMixin):
             raise AssertionError("Zip code did not match American nor Canadian zip code formats")
         if len(zip_code) < 5 or len(zip_code) > 12:
             raise AssertionError("Zip code must be between 5 and 12 characters")
+        return zip_code
 
     def __repr__(self):
         return "<User(username='%s')>" % (self.username)
