@@ -1,26 +1,40 @@
-from app import db
+from sqlalchemy import (
+    Column, String,
+    Integer, ForeignKey,
+    Boolean, Text
+    )
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
 
-class Profile(db.Model):
+from base_model import BaseModelMixin 
+
+
+# Base model the other model(s) will subclass
+Base = declarative_base()
+
+
+class Profile(Base, BaseModelMixin):
+
     __tablename__ = 'profile'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    image = db.Column(db.Text)
-    price = db.Column(db.Float(precision=2), nullable=False)
-    ingredients = db.Column(db.String(200), nullable=True)
-    portion = db.Column(db.Integer, nullable=False)
-    required_tools = db.Column(db.String(200), nullable=True)
-    user = db.relationship("User", back_populates="profile")
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    is_chef = Column(Boolean, nullable=False)
+    about_me = Column(Text)
+    profile_image = Column(Text)
+    favourite_recipe = Column(Text)
+    favourite_cuisine = Column(String, nullable = False)
+    location = Column(Text, nullable = False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+ 
+    #relationship Profile and Recipe
+    recipe = relationship("Recipe", back_populates="profile") 
 
-    def __init__(self, name, image, price, ingredients, portion, required_tools, user_id):
-        self.name = name
-        self.image = image
-        self.price = price
-        self.ingredients = ingredients
-        self.portion = portion
-        self.required_tools = required_tools
-        self.user_id = user_id
+    @validates('is_chef')
+    def validate_is_chef(self, key, is_chef):
+        if not isinstance(is_chef, bool):
+            raise AssertionError(f"Expected field 'is_chef' to be a boolean but got {type(is_chef)}")
+        return is_chef
 
     def __repr__(self):
         return f"<Profile #{self.id}: {self.name}>"
