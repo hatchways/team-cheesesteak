@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import {
   Button,
   Typography,
@@ -7,11 +6,15 @@ import {
   Card,
   CardContent,
   CardActions,
-  Box,
+  Grid,
 } from "@material-ui/core";
+import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import BackgroundImg from "../Assets/images/signUpBkg.png";
-import SignIn from "./SignIn";
+
+const regPattern = new RegExp(
+  /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
+);
 
 const signUpPageStyle = (theme) => ({
   signUpContainer: {
@@ -69,6 +72,9 @@ const signUpPageStyle = (theme) => ({
   marginLeft_2: {
     margin: "2em",
   },
+  linkNoDecoration: {
+    textDecoration: "none",
+  },
 });
 
 class SignUpPage extends Component {
@@ -89,20 +95,17 @@ class SignUpPage extends Component {
           this.setState({ usernameError: "Field should not be empty." });
         } else {
           this.setState({ usernameError: "" });
-          this.setState({ username: e.target.value });
         }
+        this.setState({ username: e.target.value });
         break;
       }
       case "signupEmail": {
-        if (
-          e.target.value.split("").filter((x) => x === "@").length !== 1 ||
-          e.target.value.indexOf(".") === -1
-        ) {
+        if (!regPattern.test(e.target.value)) {
           this.setState({ emailError: "Not a valid email id." });
         } else {
           this.setState({ emailError: "" });
-          this.setState({ email: e.target.value });
         }
+        this.setState({ email: e.target.value });
         break;
       }
       case "signupPwd": {
@@ -110,13 +113,13 @@ class SignUpPage extends Component {
           this.setState({ passwordError: "minimum 6 characters needed." });
         } else {
           this.setState({ passwordError: "" });
-          this.setState({ password: e.target.value });
         }
+        this.setState({ password: e.target.value });
         break;
       }
       case "signupPwdConfirm": {
         if (e.target.value !== this.state.password) {
-          this.setState({ passwordConfirmError: "Mismatch" });
+          this.setState({ passwordConfirmError: "Passwords not matching" });
         } else {
           this.setState({ passwordConfirmError: "" });
         }
@@ -126,9 +129,6 @@ class SignUpPage extends Component {
         break;
     }
   };
-
-  loadSignIn = () =>
-    ReactDOM.render(<SignIn />, document.getElementById("root"));
 
   render() {
     const { classes } = this.props;
@@ -144,70 +144,71 @@ class SignUpPage extends Component {
                 Create an account
               </Typography>
               <form autoComplete="off">
-                <Box display="flex">
-                  <TextField
-                    className={classes.textField}
-                    required
-                    autoFocus
-                    id="signupName"
-                    name="signupName"
-                    label="Name"
-                    placeholder="Enter your name"
-                    error={this.state.usernameError !== "" ? true : false}
-                    variant="outlined"
-                    onChange={this.validateChange}
-                    helperText={this.state.usernameError}
-                  />
-                </Box>
-                <Box display="flex">
-                  <TextField
-                    className={classes.textField}
-                    required
-                    name="signupEmail"
-                    label="Email"
-                    placeholder="Enter your e-mail address"
-                    variant="outlined"
-                    error={this.state.emailError !== "" ? true : false}
-                    helperText={this.state.emailError}
-                    onChange={this.validateChange}
-                  />
-                </Box>
-                <Box display="flex">
-                  <TextField
-                    className={classes.textField}
-                    required
-                    type="password"
-                    name="signupPwd"
-                    label="Password"
-                    error={this.state.passwordError !== "" ? true : false}
-                    placeholder="Enter password"
-                    variant="outlined"
-                    helperText="Minimum 6 characters"
-                    onChange={this.validateChange}
-                  />
-                </Box>
-                <Box display="flex">
-                  <TextField
-                    className={classes.textField}
-                    required
-                    type="password"
-                    name="signupPwdConfirm"
-                    label="Confirm Password"
-                    placeholder="Re-enter password"
-                    variant="outlined"
-                    onChange={this.validateChange}
-                    error={
-                      this.state.passwordConfirmError === "Mismatch"
-                        ? true
-                        : false
-                    }
-                    helperText={
-                      this.state.passwordConfirmError === "Mismatch"
-                        ? "Passwords not matching"
-                        : ""
-                    }
-                  />
-                </Box>
+                <Grid>
+                  <Grid item>
+                    <TextField
+                      className={classes.textField}
+                      required
+                      autoFocus
+                      name="signupName"
+                      label="Name"
+                      value={this.state.name}
+                      placeholder="Enter your name"
+                      error={this.state.usernameError !== "" ? true : false}
+                      variant="outlined"
+                      onChange={this.validateChange}
+                      helperText={this.state.usernameError}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      className={classes.textField}
+                      required
+                      name="signupEmail"
+                      label="Email"
+                      value={this.state.email}
+                      placeholder="Enter your e-mail address"
+                      variant="outlined"
+                      error={this.state.emailError !== "" ? true : false}
+                      helperText={this.state.emailError}
+                      onChange={this.validateChange}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      className={classes.textField}
+                      required
+                      type="password"
+                      name="signupPwd"
+                      label="Password"
+                      value={this.state.password}
+                      error={this.state.passwordError !== "" ? true : false}
+                      placeholder="Enter password"
+                      variant="outlined"
+                      helperText="Minimum 6 characters"
+                      onChange={this.validateChange}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      className={classes.textField}
+                      required
+                      type="password"
+                      name="signupPwdConfirm"
+                      label="Confirm Password"
+                      placeholder="Re-enter password"
+                      variant="outlined"
+                      onChange={this.validateChange}
+                      error={
+                        this.state.passwordConfirmError !==
+                        "Passwords not matching"
+                          ? false
+                          : true
+                      }
+                      helperText={this.state.passwordConfirmError}
+                    />
+                  </Grid>
+                </Grid>
               </form>
             </CardContent>
             <CardActions style={{ justifyContent: "center" }}>
@@ -225,13 +226,14 @@ class SignUpPage extends Component {
               align="right"
             >
               Already Member ?
-              <Button
-                className={`${classes.button} ${classes.marginLeft_2}`}
-                variant="contained"
-                onClick={this.loadSignIn}
-              >
-                Sign In
-              </Button>
+              <Link to="/signin" className={classes.linkNoDecoration}>
+                <Button
+                  className={`${classes.button} ${classes.marginLeft_2}`}
+                  variant="contained"
+                >
+                  Sign In
+                </Button>
+              </Link>
             </Typography>
           </div>
         </div>

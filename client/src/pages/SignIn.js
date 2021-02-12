@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
+import React, { useState } from "react";
 import {
   Button,
   Typography,
@@ -7,11 +6,11 @@ import {
   Card,
   CardContent,
   CardActions,
-  Box,
+  Grid,
 } from "@material-ui/core";
+import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import BackgroundImg from "../Assets/images/signUpBkg.png";
-import SignUp from "./SignUp";
 
 const signInPageStyle = (theme) => ({
   signInContainer: {
@@ -69,82 +68,82 @@ const signInPageStyle = (theme) => ({
   marginLeft_2: {
     margin: "2em",
   },
+  linkNoDecoration: {
+    textDecoration: "none",
+  },
 });
 
-class SignInPage extends Component {
-  state = {
-    email: "",
-    password: "",
-  };
+const SignInPage = (props) => {
+  const { classes } = props;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  loadSignUp = () =>
-    ReactDOM.render(<SignUp />, document.getElementById("root"));
-
-  render() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.signInContainer}>
-        <div className={classes.leftSideContainer}>
-          <div className={classes.titleLogo}>
-            <Typography variant="h4">CHEF'S MENU</Typography>
-          </div>
-          <Card className={classes.card}>
-            <CardContent>
-              <Typography className={classes.title} gutterBottom>
-                Login
-              </Typography>
-              <form autoComplete="off">
-                <Box display="flex">
+  console.log(email, password); // Just added for now to avoid the warning saying both are assigned, but not used.
+  return (
+    <div className={classes.signInContainer}>
+      <div className={classes.leftSideContainer}>
+        <div className={classes.titleLogo}>
+          <Typography variant="h4">CHEF'S MENU</Typography>
+        </div>
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography className={classes.title} gutterBottom>
+              Login
+            </Typography>
+            <form autoComplete="off">
+              <Grid>
+                <Grid item>
                   <TextField
                     className={classes.textField}
                     required
                     name="signupEmail"
                     label="Email"
+                    value={email}
                     placeholder="Enter your e-mail address"
                     variant="outlined"
+                    onChange={(e) => setEmail(e.target.value)}
                   />
-                </Box>
-                <Box display="flex">
+                </Grid>
+                <Grid item>
                   <TextField
                     className={classes.textField}
                     required
                     type="password"
                     name="signupPwd"
                     label="Password"
+                    value={password}
                     placeholder="Enter password"
                     variant="outlined"
+                    onChange={(e) => setPassword(e.target.value)}
                   />
-                </Box>
-              </form>
-            </CardContent>
-            <CardActions style={{ justifyContent: "center" }}>
-              <Button type="submit" className={classes.button}>
-                Sign In
-              </Button>
-            </CardActions>
-          </Card>
-        </div>
-        <div className={classes.rightSideContainer}>
-          <div style={{ padding: "25px" }}>
-            <Typography
-              className={classes.whiteText}
-              variant="h6"
-              align="right"
-            >
-              Don't have an account ?
+                </Grid>
+              </Grid>
+            </form>
+          </CardContent>
+          <CardActions style={{ justifyContent: "center" }}>
+            <Button type="submit" className={classes.button}>
+              Sign In
+            </Button>
+          </CardActions>
+        </Card>
+      </div>
+      <div className={classes.rightSideContainer}>
+        <div style={{ padding: "25px" }}>
+          <Typography className={classes.whiteText} variant="h6" align="right">
+            Don't have an account ?
+            <Link to="/signup" className={classes.linkNoDecoration}>
               <Button
                 className={`${classes.button} ${classes.marginLeft_2}`}
                 variant="contained"
-                onClick={this.loadSignUp}
               >
                 Sign Up
               </Button>
-            </Typography>
-          </div>
+            </Link>
+          </Typography>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default withStyles(signInPageStyle)(SignInPage);
