@@ -1,32 +1,24 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Typography,
   TextField,
   Card,
   CardContent,
-  CardActions,
   Grid,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import BackgroundImg from "../Assets/images/signUpBkg.png";
+import ChefsMenuLogo from "../Assets/images/Logo.png";
 
-const regPattern = new RegExp(
-  /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-);
+const regPattern = new RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i);
 
 const signUpPageStyle = (theme) => ({
   signUpContainer: {
     fontFamily: '"Montserrat"',
     margin: theme.spacing(2),
     height: "100vh",
-  },
-  card: {
-    width: "50%",
-    height: "75%",
-    marginLeft: theme.spacing(20),
-    textAlign: "center",
   },
   title: {
     fontSize: 25,
@@ -43,31 +35,27 @@ const signUpPageStyle = (theme) => ({
   },
   titleLogo: {
     width: "50%",
-    marginLeft: theme.spacing(20),
-    paddingBottom: theme.spacing(2),
-    textAlign: "center",
-  },
-  leftSideContainer: {
-    width: "50%",
-    height: "100vh",
-    float: "left",
+    height: "10vh",
+    backgroundImage: `url(${ChefsMenuLogo})`,
+    backgroundSize: "contain",
+    backgroundRepeat: "no-repeat",
   },
   rightSideContainer: {
-    width: "50%",
-    height: "100vh",
     [theme.breakpoints.up("md")]: {
       backgroundImage: `url(${BackgroundImg})`,
       backgroundSize: "cover",
       backgroundPosition: "left",
     },
-    float: "left",
   },
   textField: {
     margin: theme.spacing(2),
     width: "30ch",
   },
-  whiteText: {
-    color: "white",
+  textColor: {
+    [theme.breakpoints.up("md")]: {
+      color: "white",
+    },
+    color: "black",
   },
   marginLeft_2: {
     margin: "2em",
@@ -77,51 +65,51 @@ const signUpPageStyle = (theme) => ({
   },
 });
 
-class SignUpPage extends Component {
-  state = {
-    username: "",
-    email: "",
-    password: "",
-    usernameError: "",
-    emailError: "",
-    passwordError: "",
-    passwordConfirmError: "",
-  };
+const SignUpPage = (props) => {
+  const [username, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [usernameError, setUserNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordConfirmError, setPasswordConfirmError] = useState("");
 
-  validateChange = (e) => {
+  const { classes } = props;
+
+  const validateChange = (e) => {
     switch (e.target.name) {
       case "signupName": {
         if (e.target.value.length === 0) {
-          this.setState({ usernameError: "Field should not be empty." });
+          setUserNameError("Field should not be empty.");
         } else {
-          this.setState({ usernameError: "" });
+          setUserNameError("");
         }
-        this.setState({ username: e.target.value });
+        setUserName(e.target.value);
         break;
       }
       case "signupEmail": {
         if (!regPattern.test(e.target.value)) {
-          this.setState({ emailError: "Not a valid email id." });
+          setEmailError("Not a valid email id.");
         } else {
-          this.setState({ emailError: "" });
+          setEmailError("");
         }
-        this.setState({ email: e.target.value });
+        setEmail(e.target.value);
         break;
       }
       case "signupPwd": {
         if (e.target.value.length < 6) {
-          this.setState({ passwordError: "minimum 6 characters needed." });
+          setPasswordError("Minimum 6 characters needed.");
         } else {
-          this.setState({ passwordError: "" });
+          setPasswordError("");
         }
-        this.setState({ password: e.target.value });
+        setPassword(e.target.value);
         break;
       }
       case "signupPwdConfirm": {
-        if (e.target.value !== this.state.password) {
-          this.setState({ passwordConfirmError: "Passwords not matching" });
+        if (e.target.value !== password) {
+          setPasswordConfirmError("Passwords not matching");
         } else {
-          this.setState({ passwordConfirmError: "" });
+          setPasswordConfirmError("");
         }
         break;
       }
@@ -129,102 +117,107 @@ class SignUpPage extends Component {
         break;
     }
   };
-
-  render() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.signUpContainer}>
-        <div className={classes.leftSideContainer}>
-          <div className={classes.titleLogo}>
-            <Typography variant="h4">CHEF'S MENU</Typography>
-          </div>
-          <Card className={classes.card}>
-            <CardContent>
-              <Typography className={classes.title} gutterBottom>
-                Create an account
-              </Typography>
-              <form autoComplete="off">
-                <Grid>
-                  <Grid item>
-                    <TextField
-                      className={classes.textField}
-                      required
-                      autoFocus
-                      name="signupName"
-                      label="Name"
-                      value={this.state.name}
-                      placeholder="Enter your name"
-                      error={this.state.usernameError !== "" ? true : false}
-                      variant="outlined"
-                      onChange={this.validateChange}
-                      helperText={this.state.usernameError}
-                    />
+  return (
+    <Grid container direction="row" className={classes.signUpContainer}>
+      <Grid item md={6} sm={12}>
+        <Grid
+          container
+          direction="column"
+          justify="flex-start"
+          alignItems="center"
+        >
+          <Grid item className={classes.titleLogo}></Grid>
+          <Grid item>
+            <Card>
+              <CardContent>
+                <Typography className={classes.title} gutterBottom>
+                  Create an account
+                </Typography>
+                <form autoComplete="off">
+                  <Grid
+                    container
+                    direction="column"
+                    justify="flex-start"
+                    alignItems="center"
+                  >
+                    <Grid item>
+                      <TextField
+                        className={classes.textField}
+                        required
+                        autoFocus
+                        name="signupName"
+                        label="Name"
+                        value={username}
+                        placeholder="Enter your name"
+                        error={usernameError !== "" ? true : false}
+                        variant="outlined"
+                        onChange={(e) => validateChange(e)}
+                        helperText={usernameError}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        className={classes.textField}
+                        required
+                        name="signupEmail"
+                        label="Email"
+                        value={email}
+                        placeholder="Enter your e-mail address"
+                        variant="outlined"
+                        error={emailError !== "" ? true : false}
+                        helperText={emailError}
+                        onChange={(e) => validateChange(e)}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        className={classes.textField}
+                        required
+                        type="password"
+                        name="signupPwd"
+                        label="Password"
+                        value={password}
+                        error={passwordError !== "" ? true : false}
+                        placeholder="Enter password"
+                        variant="outlined"
+                        helperText="Minimum 6 characters"
+                        onChange={(e) => validateChange(e)}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <TextField
+                        className={classes.textField}
+                        required
+                        type="password"
+                        name="signupPwdConfirm"
+                        label="Confirm Password"
+                        placeholder="Re-enter password"
+                        variant="outlined"
+                        onChange={(e) => validateChange(e)}
+                        error={
+                          passwordConfirmError !== "Passwords not matching"
+                            ? false
+                            : true
+                        }
+                        helperText={passwordConfirmError}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Button type="submit" className={classes.button}>
+                        Sign Up
+                      </Button>
+                    </Grid>
                   </Grid>
-                  <Grid item>
-                    <TextField
-                      className={classes.textField}
-                      required
-                      name="signupEmail"
-                      label="Email"
-                      value={this.state.email}
-                      placeholder="Enter your e-mail address"
-                      variant="outlined"
-                      error={this.state.emailError !== "" ? true : false}
-                      helperText={this.state.emailError}
-                      onChange={this.validateChange}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <TextField
-                      className={classes.textField}
-                      required
-                      type="password"
-                      name="signupPwd"
-                      label="Password"
-                      value={this.state.password}
-                      error={this.state.passwordError !== "" ? true : false}
-                      placeholder="Enter password"
-                      variant="outlined"
-                      helperText="Minimum 6 characters"
-                      onChange={this.validateChange}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <TextField
-                      className={classes.textField}
-                      required
-                      type="password"
-                      name="signupPwdConfirm"
-                      label="Confirm Password"
-                      placeholder="Re-enter password"
-                      variant="outlined"
-                      onChange={this.validateChange}
-                      error={
-                        this.state.passwordConfirmError !==
-                        "Passwords not matching"
-                          ? false
-                          : true
-                      }
-                      helperText={this.state.passwordConfirmError}
-                    />
-                  </Grid>
-                </Grid>
-              </form>
-            </CardContent>
-            <CardActions style={{ justifyContent: "center" }}>
-              <Button type="submit" className={classes.button}>
-                Sign Up
-              </Button>
-            </CardActions>
-          </Card>
-        </div>
-        <div className={classes.rightSideContainer}>
-          <div style={{ padding: "25px" }}>
-            <Typography
-              className={classes.whiteText}
-              variant="h6"
-              align="right"
-            >
+                </form>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item md={6} sm={12} className={classes.rightSideContainer}>
+        <Grid container direction="row" justify="flex-end">
+          <Grid item style={{ padding: "25px" }}>
+            <Typography className={classes.textColor} variant="h6">
               Already Member ?
               <Link to="/signin" className={classes.linkNoDecoration}>
                 <Button
@@ -235,11 +228,11 @@ class SignUpPage extends Component {
                 </Button>
               </Link>
             </Typography>
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+};
 
 export default withStyles(signUpPageStyle)(SignUpPage);
