@@ -3,10 +3,8 @@ import json
 import smtplib
 import requests
 from flask import jsonify, request, Blueprint
-# from config import API_KEY
+from config import API_KEY
 map_handler = Blueprint('map_handler', __name__)
-
-API_KEY = "AIzaSyBnRomAf1-5cOjnbUsf3mYwWvsZQQkYh5U"
 
 @map_handler.route('/map', methods=['POST'])
 def map():
