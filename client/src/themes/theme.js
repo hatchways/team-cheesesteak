@@ -1,11 +1,20 @@
 import { createMuiTheme } from "@material-ui/core";
 
 export const theme = createMuiTheme({
-  typography: {
-    fontFamily: '"Roboto"'
+  overrides: {
+    MuiChip: {
+      root: {
+        borderRadius: 0,
+        margin: "5px",
+      },
+    },
   },
-  primary: "#f04040",
-  secondary: "#1f1f1f",
-  error: "#d8000c",
-  bgcolor: "#f6f6f6"
+  typography: {
+    fontFamily: '"Montserrat"',
+    fontSize: 13,
+  },
+  palette: {
+    primary: { main: "#F8F8FF" },
+    secondary: { main: "#ff743d" },
+  },
 });
