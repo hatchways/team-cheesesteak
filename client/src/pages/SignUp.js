@@ -16,8 +16,7 @@ const regPattern = new RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i);
 
 const signUpPageStyle = (theme) => ({
   signUpContainer: {
-    fontFamily: '"Montserrat"',
-    margin: theme.spacing(2),
+    fontFamily: '"Montserrat"',    
     height: "100vh",
   },
   title: {
@@ -36,6 +35,7 @@ const signUpPageStyle = (theme) => ({
   titleLogo: {
     width: "50%",
     height: "10vh",
+    margin: theme.spacing(2),
     backgroundImage: `url(${ChefsMenuLogo})`,
     backgroundSize: "contain",
     backgroundRepeat: "no-repeat",
@@ -180,7 +180,7 @@ const SignUpPage = (props) => {
                         error={passwordError !== "" ? true : false}
                         placeholder="Enter password"
                         variant="outlined"
-                        helperText="Minimum 6 characters"
+                        helperText={passwordError}
                         onChange={(e) => validateChange(e)}
                       />
                     </Grid>

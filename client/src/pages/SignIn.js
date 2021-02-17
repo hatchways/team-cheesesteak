@@ -15,7 +15,6 @@ import ChefsMenuLogo from "../Assets/images/Logo.png";
 const signInPageStyle = (theme) => ({
   signInContainer: {
     fontFamily: '"Montserrat"',
-    margin: theme.spacing(2),
     height: "100vh",
   },
 
@@ -35,6 +34,7 @@ const signInPageStyle = (theme) => ({
   titleLogo: {
     width: "50%",
     height: "10vh",
+    margin: theme.spacing(2),
     backgroundImage: `url(${ChefsMenuLogo})`,
     backgroundSize: "contain",
     backgroundRepeat: "no-repeat",
