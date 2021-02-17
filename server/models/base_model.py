@@ -30,17 +30,16 @@ class BaseModelMixin(object):
         serialized_fields = {}
         # Get all fields if neither excludes or includes is passed
         if len(includes) == 0:
-            for field in dir(self):
-                # Ignore dunder methods or private attributes
-                if "_" in field or field in excludes:
+            for field in self.get_fields():
+                if field in excludes:
                     continue
                 # Make sure the class has the attribute
                 try:
                     serialized_fields[field] = getattr(self, field)
                 except AttributeError:
                     raise AttributeError("Tried to get field %s but %s doesn't exist") % (field, field)
-                except:
-                    raise Exception("Uncaught exception in %s to_dict()" % (self))
+                except Exception as e:
+                    raise Exception("Uncaught exception in %s.to_dict() ERROR: %s" % (self.__class__.__name__, e))
             return serialized_fields
 
         # Get only the fields that were included
@@ -50,8 +49,8 @@ class BaseModelMixin(object):
                     serialized_fields[field] = getattr(self, field)
                 except AttributeError:
                     raise AttributeError("Tried to get field %s but %s doesn't exist") % (field, field)
-                except:
-                    raise Exception("Uncaught exception in %s to_dict()" % (self))
+                except Exception as e:
+                    raise Exception("Uncaught exception in %s.to_dict() ERROR: %s" % (self.__class__.__name__, e))
             return serialized_fields
 
     @classmethod
@@ -80,9 +79,7 @@ class BaseModelMixin(object):
                 return query.all()
             return query.first()
         else:
-            for field, value in info.items():
-                print(f"{field}: {value}")
-            raise NoResultFound(f"\nFailed to find instance from table {cls.__tablename__} with info listed above")
+            raise NoResultFound(f"\nFailed to find instance from table '{cls.__tablename__}'")
 
     @classmethod
     def create(cls, **info):
@@ -102,6 +99,7 @@ class BaseModelMixin(object):
             else:
                 raise AttributeError(f"Tried to set {field} to {value} but this {cls} does not have a {field} field")
         session.add(new_instance)
+        session.commit()
         created_instance = session.query(cls).filter_by(**info).first()
         return created_instance
 
@@ -134,3 +132,15 @@ class BaseModelMixin(object):
         instance = cls.get_instance(**{'id': id})
         session.delete(instance)
         session.commit()
+
+    @classmethod
+    def get_fields(cls):
+        """
+        Get all the names used for the columns in the model definition
+        build a list and return them
+        """
+        fields = []
+        mapper = inspect(cls)
+        for field in mapper.attrs:
+            fields.append(field.key)
+        return fields

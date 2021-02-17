@@ -1,6 +1,7 @@
 import os
 from flask_jwt_extended import JWTManager
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from api.ping_handler import ping_handler
 from api.home_handler import home_handler
 from api.auth import auth_views
@@ -25,6 +26,7 @@ app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 
 # Register flask_jwt_extended with Flask
 jwt = JWTManager(app)
+
 
 app.register_blueprint(home_handler)
 app.register_blueprint(ping_handler)
