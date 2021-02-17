@@ -12,14 +12,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models.base_model import Base, BaseModelMixin
 
 
+
 class User(Base, BaseModelMixin):
     __tablename__ = "user"
-
+    
     id = Column(Integer, primary_key=True)
 
     # Split up the address to make finding location radius easier
     # Also makes displaying info easier
-    street_address = Column(String(30), nullable=False)
+    street_address = Column(String(150), nullable=False)
     city = Column(String(30), nullable=False)
     state_or_province = Column(String(30), nullable=False)
     country = Column(String(30), nullable=False)
@@ -34,33 +35,12 @@ class User(Base, BaseModelMixin):
     # This requires the Profile model to link back to the user model
     profile = relationship("Profile", uselist=False, backref="user", cascade="all, delete-orphan")
 
-    def set_password(self, password):
-        if not password:
-            raise AssertionError('Password not provided')
-        if not re.match('\d.*[A-Z]|[A-Z].*\d', password):
-            raise AssertionError('Password must contain 1 capital letter and 1 number')
-        if len(password) < 8 or len(password) > 50:
-            raise AssertionError('Password must be between 8 and 50 characters')
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-    @staticmethod
-    def credentials_match(username, password):
-        """
-        Return True if the credentials are correct
-        False otherwise
-        """
-        user = User.get_by_username(username)
-        return user.check_password(password)
-
     @staticmethod
     def get_by_username(username):
         """
         Return a user instance or raise a NoResultFound exception
         """
-        user = User.query.filter(User.username == username).first()
+        user = session.query(User).filter(User.username == username).first()
         if not user:
             raise NoResultFound(f"User with username {username} does not exist")
         return user
@@ -73,7 +53,7 @@ class User(Base, BaseModelMixin):
         Return a full address for the user such as...
         123 Main Street, Columbus, Ohio, United States, 45796
         """
-        return f"{self.street_and_city}, {self.state_or_province}, {self.country}, {self.zip_code}"
+        return f"{self.get_street_and_city}, {self.state_or_province}, {self.country}, {self.zip_code}"
 
     @property
     def get_street_and_city(self):
