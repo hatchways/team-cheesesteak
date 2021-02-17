@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function TopBar(props) {
+function TopBar(props) {
 
 	const classes = useStyles();
 	const user = useContext(UserContext)
@@ -148,3 +148,5 @@ export default function TopBar(props) {
 		</Grid>
 	);
 }
+
+export default TopBar
