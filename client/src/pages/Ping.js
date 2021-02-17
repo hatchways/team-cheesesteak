@@ -12,12 +12,12 @@ function Ping(props) {
   const submitAnswer = () => {
     console.log("run");
     let status;
-    fetch("/ping", {
+    fetch("/map", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ teamName: answer })
+      body: JSON.stringify({ address: answer })
     })
       .then(res => {
         status = res.status;
@@ -32,14 +32,14 @@ function Ping(props) {
         console.log(err.message);
       });
   };
-
+  console.log(result);
   return (
     <div>
       <Typography>
         Step 3: Add your first name to server/.env, restart the server and test
         the result below
       </Typography>
-      <Typography>{result}</Typography>
+
 
       <FormControl>
         <TextField
@@ -48,8 +48,11 @@ function Ping(props) {
         />
       </FormControl>
       <Button onClick={submitAnswer}>Submit</Button>
+
+      <Typography>{result.geocodes ? result.geocodes.lat : ''}</Typography>
     </div>
   );
 }
 
 export default Ping;
+// Pickering, ON
