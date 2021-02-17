@@ -10,9 +10,6 @@ import TopBar from "./components/TopBar";
 
 import "./App.css";
 
-
-
-
 function App() {
   const user = {
     FName: 'Pierre',
@@ -27,7 +24,7 @@ function App() {
     <MuiThemeProvider theme={theme}>
       <UserContext.Provider value={user}>
         <BrowserRouter>
-            <TopBar />
+          <TopBar />
           <Route path="/" component={LandingPage} />
         </BrowserRouter>
       </UserContext.Provider>

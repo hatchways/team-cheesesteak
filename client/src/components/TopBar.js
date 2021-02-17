@@ -4,6 +4,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Grid from '@material-ui/core/Grid';
 
 import DragHandleIcon from '@material-ui/icons/DragHandle';
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -16,7 +17,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import clsx from 'clsx';
 import { Link } from "react-router-dom";
 
 import UserContext from '../context/User'
@@ -73,10 +73,8 @@ export default function TopBar(props) {
 
 
 	const list = (anchor) => (
-		<div
-			className={clsx(classes.list, {
-				[classes.fullList]: anchor === 'top' || anchor === 'bottom',
-			})}
+		<Grid
+			className='top'
 			role="presentation"
 			onClick={toggleDrawer('top', false)}
 			onKeyDown={toggleDrawer('top', false)}
@@ -90,11 +88,11 @@ export default function TopBar(props) {
 					</Link>
 				))}
 			</List>
-		</div>
+		</Grid>
 	);
 
 	return (
-		<div className={classes.root}>
+		<Grid className={classes.root}>
 			<AppBar position="static" className={classes.AppBar}>
 				<Toolbar>
 
@@ -105,7 +103,7 @@ export default function TopBar(props) {
 						<DragHandleIcon />
 					</IconButton>
 					{auth && (
-						<div>
+						<Grid>
 							<IconButton
 								aria-label="account of current user"
 								aria-controls="menu-appbar"
@@ -133,10 +131,10 @@ export default function TopBar(props) {
 								<MenuItem onClick={handleClose}><Link to='/profile'>Profile</Link></MenuItem>
 								<MenuItem onClick={handleAuth}>{auth ? 'Logout' : 'Login'}</MenuItem>
 							</Menu>
-						</div>
+						</Grid>
 					)}
 				</Toolbar>
-				<div>
+				<Grid>
 
 					<Drawer
 						anchor={"top"}
@@ -145,8 +143,8 @@ export default function TopBar(props) {
 					>
 						{list(routes)}
 					</Drawer>
-				</div>
+				</Grid>
 			</AppBar>
-		</div>
+		</Grid>
 	);
 }
