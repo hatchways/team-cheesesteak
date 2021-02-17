@@ -3,9 +3,12 @@ import random
 import string
 from sqlalchemy import inspect
 from sqlalchemy.ext.declarative import declarative_base
-from models.models import User, Profile, Recipe
+from models.user import User
+from models.recipe import Recipe
+from models.profile import Profile
+#from models.models import User, Profile, Recipe
 
-def write_fields_to_file(users, profiles, recipes):
+def print_info(users, profiles, recipes):
     """
     WARNING: This WILL overwrite the data in the
     'seeded_objects_info.txt' file if one already exists!
@@ -22,30 +25,25 @@ def write_fields_to_file(users, profiles, recipes):
     user_separator = "=========Users=========\n"
     profile_separator = "\n=========Profiles=========\n"
     recipe_separator = "\n=========Recipes=========\n"
-    user_fields = ['id', 'username', 'email', 'zip_code']
-    profile_fields = ['id','user_id', 'name', 'is_chef']
-    recipe_fields = ['id', 'profile_id', 'name', 'cuisine', 'price']
-    with open("seeded_objects_info.txt", "w") as info:
-        info.write(user_separator)
-        for user in users:
-            for field, value in user.to_dict(includes=user_fields).items():
-                info.write("%s: %s\n" % (field, value))
-            info.write("\n\n")
-        info.write(profile_separator)
-        for profile in profiles:
-            for field, value in profile.to_dict(includes=profile_fields).items():
-                info.write("%s: %s\n" % (field, value))
-            info.write("\n\n")
-        info.write(recipe_separator)
-        for recipe in recipes:
-            print("Writing recipe", recipe, "\n\n")
-            for field, value in recipe.to_dict(includes=recipe_fields).items():
-                info.write("%s: %s\n" % (field, value))
-            info.write("\n\n")
-    print("\n\nCompleted creating objects and writing information to seeded_objects_info.txt\n\n")
+    print(user_separator)
+    for user in users:
+        for field, value in user.items():
+            print("%s: %s\n" % (field, value))
+        print("\n\n")
+    print(profile_separator)
+    for profile in profiles:
+        for field, value in profile.items():
+            print("%s: %s\n" % (field, value))
+        print("\n\n")
+    print(recipe_separator)
+    for recipe in recipes:
+        for field, value in recipe.items():
+            print("%s: %s\n" % (field, value))
+        print("\n\n")
+    print("\n\nCompleted creating objects\n\n")
 
 # Seed script
-def seed_database(num_of_instances=5):
+def seed_database():
     """
     WARNING: This will NOT create the tables for you if you
     dropped your entire database. You must re-create the database
@@ -69,88 +67,134 @@ def seed_database(num_of_instances=5):
     objects without any recipes for filter testing.
     """
 
-    # Helper functions
-    def random_value(value_type, length, is_price=False, is_password=False):
-        """
-        Create random values to fill out the data for the random models
-        """
-        if is_price:
-            return random.randint(300, 1000)
-        elif value_type == "int":
-            return random.randint(0,length)
-        elif is_password:
-            # Everyone gets the same password
-            return "AbcdE123"
-        elif value_type == "str":
-            # make a string of the given length and return
-            letters = string.ascii_letters
-            return "".join(random.choice(letters) for letter in range(length))
-    def generate_email():
-        return random_value("str", 10)+"@gmail.com"
-
-    users = []
-    profiles = []
-    recipes = []
-    is_chef = False
     # Create how ever many user and profile objects the user defined
-    for i in range(num_of_instances):
+    user_dicts =[
+        {
+            'street_address': "777 Brockton Avenue",
+            'city': "Abington",
+            "state_or_province": "Massachusetts",
+            'country': "United States",
+            'zip_code': "01001",
+            'username': "SlayrFreex",
+            'email': "slayit@gmail.com",
+            'password': "Testing123",
+        },
+        {
+            'street_address': "30 Memorial Drive",
+            'city': "Avon",
+            'state_or_province': "Massachusetts",
+            'country': "United States",
+            'zip_code': "20194",
+            'username': "Foodie892",
+            'email': "foodgood@aol.com",
+            'password': "Testing123"
 
-        # Create user
-        new_user = User.create(**{
-            'street_address': random_value('str', 16),
-            'city': random_value('str', 10),
-            'state_or_province': random_value('str', 15),
-            'country': random_value('str', 10),
-            'zip_code': "45698",
-            'username': random_value('str', 20),
-            'email': generate_email(),
-            # The first two args don't actually matter when is_password=True
-            'password': random_value("str", 15, is_password=True)
-            })
-        users.append(new_user)
+        },
+        {
+            'street_address': "250 Hartford Avenue",
+            'city': "Toronto",
+            'state_or_province': "Ontario",
+            'country': "Canada",
+            'zip_code': "A1A 1A1",
+            'username': "FoodGod@foodie.com",
+            'email': "imAchef@food.org",
+            'password': "Testing123"
+        },
+    ]
+    profile_dicts = [
+        {
+            'name': "Giuseppe",
+            "is_chef": True,
+            "about_me": "I love to cook and have been doing so for 15 years. My specialty is Italian food",
+            "location": "Massachusettes, United States",
+            'profile_image': "https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+            'favourite_recipe': "Spicy Pork Tenderloin with Apples and Sweet Potatoes",
+            'favourite_cuisine': "italian",
+        },
+        {
+            'name': "Mario",
+            "is_chef": False,
+            'about_me': "I love food, if I could eat every hour of the day I would.",
+            "location": "Massachusettes, United States",
 
-        # Create profile     
+            'profile_image': "https://images.unsplash.com/photo-1521341057461-6eb5f40b07ab?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+            'favourite_cuisine': "thai",
+        },
+        {
+            'name': "Tessa",
+            "is_chef": False,
+            'about_me': "I'm not a chef but wish I was, I couldn't boil noodles without burning them!",
+            "location": "Ontario, Canada",
+            'profile_image': "https://images.unsplash.com/photo-1505999407077-7937810b98ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1188&q=80",
+            'favourite_cuisine': "Mexican"
+        }
+    ]
+
+    recipe_dicts = [
+        {
+            'name': 'Spicy Pork Tenderloin with Apples and Sweet Potatoes',
+            'description': "A spicy pork tenderloin with delicious green apples and sweet potatoes",
+            'available': True,
+            'cuisine': "french",
+            'price': 1000,
+            'ingredients': "Pork Tenderloin,Green Apples,Sweet Potatoes,Rosemary",
+            'required_items': "Dinner Plate, Kitchen Table, Oven",
+            'image_urls': "https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?ixid=MXwxMjA3fDB8MHxzZWFyY2h8M3x8cG9yayUyMHRlbmRlcmxvaW58ZW58MHx8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=60https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?ixid=MXwxMjA3fDB8MHxzZWFyY2h8M3x8cG9yayUyMHRlbmRlcmxvaW58ZW58MHx8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=60,"
+        },
+        {
+            'name': "Al's Burmese Chicken Curry",
+            'description': "Chicken",
+            'available': False,
+            'cuisine': "indian",
+            'price': 1000,
+            'ingredients': "Pork Tenderloin,Green Apples,Sweet Potatoes,Rosemary",
+            'required_items': "Dinner Plate, Kitchen Table, Oven",
+            'image_urls': "https://images.unsplash.com/photo-1501200291289-c5a76c232e5f?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8M3x8fGVufDB8fHw%3D&auto=format&fit=crop&w=1000&q=60,"
+        },
+        {
+            'name': "Sweet Potato and Venison Shepherd's Pie",
+            'description': "Shepherds Pie stuffed with sweet potatoes and venison, cooked to golden perfection",
+            'available': True,
+            'cuisine': "french",
+            'price': 2000,
+            'ingredients': "Venison,Sweet potatoes,Gravy",
+            'required_items': "Dinner Plate,Oven",
+            'image_urls': "https://images.unsplash.com/photo-1600626336264-60ef2a55bd33?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NHx8c2hlcGhlcmRzJTIwcGllfGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=60,"
+        },
+        {
+            'name': "Gemelli Pasta with Roasted Pumpkin and Pancetta",
+            "description": "Delicious pasta smothered in Pancetta with Roasted Pumpkin",
+            'available': False,
+            'cuisine': "italian",
+            'price': 1500,
+            'ingredients': "Roasted Pumpkin,Pasta,Pancetta",
+            'required_items': "Large Pot,Stove,Dinner Table",
+            'image_urls': "https://images.unsplash.com/photo-1579631542720-3a87824fff86?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80,"
+        },
+        {
+            'name': "Beef Stroganoff with Ground Beef",
+            'description': "Beef stroganoff filled with ground beef, served with a delicious buttery dinner roll",
+            'available': True,
+            'cuisine': "turkish",
+            'price': 2500,
+            'ingredients': "Ground Beef,Brown Gravy,Wide Egg Noodles,",
+            'required_items': "Large Pot,Stove Top,Oven",
+            'image_urls': "https://images.unsplash.com/photo-1504669221159-56caf7b07f57?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80,",
+        },
+    ]
+    for index in range(len(user_dicts)):
+        print(index)
+        new_user = User.create(**user_dicts[index])
+
+            # Create profile     
         new_profile = Profile()
-        new_profile = new_profile.create(**{
-            'name': random_value('str', 15),
-            'is_chef': is_chef,
-            'about_me': random_value('str', 50),
-            'profile_image': random_value('str', 12),
-            'favourite_cuisine': random.choice(Recipe.get_cuisines()),
-            "location": random_value('str', 20),
-        })
-        profiles.append(new_profile)
+        new_profile = new_profile.create(**profile_dicts[index])
 
-        # Assign the new profile to the new user
+            # Assign the new profile to the new user
         new_user.assign_one_to_one('profile', new_profile)
-        # Make some users normal, i.e no recipes
-        if not is_chef:
-            is_chef = True
-            continue
-        # Create 5 recipes for each user/profile
-        for j in range(0,6):
-            # For filter testing
-            if i % 3 == 1:
-                is_available = False
-            else:
-                is_available = True
-            # Generate random lists
-            random_items = [random.choice(string.ascii_letters) for x in range(6)]
-            random_ingredients = [random.choice(string.ascii_letters) for x in range(6)]
-            random_urls = [random.choice(string.ascii_letters) for x in range(6)]
-            new_recipe = Recipe.create(**{
-                'name': random_value('str', 25),
-                'description': random_value('str', 50),
-                'available': is_available,
-                'cuisine': random.choice(Recipe.get_cuisines()),
-                'price': random_value("str", 10, is_price=True),
-                'ingredients': ",".join(random_ingredients),
-                'required_items': ",".join(random_items),
-                'image_urls': ",".join(random_urls)
-            })
-            recipes.append(new_recipe)
-            # Add the new recipe to the One to Many field in the Profile model
-            new_profile.add_to_relationship('recipes', new_recipe)
-        if is_chef:
-            is_chef = False
-    write_fields_to_file(users, profiles, recipes)
+
+            # Create 5 recipes for each user/profile
+        new_recipe = Recipe.create(**recipe_dicts[index])
+                # Add the new recipe to the One to Many field in the Profile model
+        new_profile.add_to_relationship('recipes', new_recipe)
+    print_info(user_dicts, profile_dicts, recipe_dicts)
