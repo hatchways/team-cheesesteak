@@ -34,6 +34,21 @@ const useStyles = makeStyles((theme) => ({
 	AppBar: {
 		backgroundColor: '#fff',
 		color: '#000',
+		'& a:active': {
+			color: 'none'
+		}
+	},
+	AppBarLink: {
+		textDecoration: 'none',
+		'&:hover': {
+			color: '#333'
+		},
+		'&:active': {
+			color: '#333'
+		},
+		'&:visited': {
+			color: '#333'
+		},
 	},
 }));
 
@@ -63,7 +78,7 @@ function TopBar(props) {
 		setAnchorEl(null);
 	};
 
-	const toggleDrawer = (anchor, open) => (event) => {
+	const toggleDrawer = (open) => (event) => {
 		if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
 			return;
 		}
@@ -76,12 +91,12 @@ function TopBar(props) {
 		<Grid
 			className='top'
 			role="presentation"
-			onClick={toggleDrawer('top', false)}
-			onKeyDown={toggleDrawer('top', false)}
+			onClick={toggleDrawer(false)}
+			onKeyDown={toggleDrawer(false)}
 		>
 			<List>
 				{routes.map((text, index) => (
-					<Link to={`/${text}`}>
+					<Link to={`/${text}`} className={classes.AppBarLink}>
 						<ListItem button key={text}>
 							<ListItemText primary={text} />
 						</ListItem>
@@ -97,9 +112,9 @@ function TopBar(props) {
 				<Toolbar>
 
 					<Typography variant="h5" className={classes.title}>
-						<Link to='/' className='logoname'>CHEF'S MENU</Link>
+						<Link to='/' className={classes.AppBarLink}>CHEF'S MENU</Link>
 					</Typography>
-					<IconButton edge="start" onClick={toggleDrawer("top", true)} className={classes.menuButton} color="inherit" aria-label="menu">
+					<IconButton edge="start" onClick={toggleDrawer(true)} className={classes.menuButton} color="inherit" aria-label="menu">
 						<DragHandleIcon />
 					</IconButton>
 					{auth && (
@@ -128,7 +143,7 @@ function TopBar(props) {
 								open={open}
 								onClose={handleClose}
 							>
-								<MenuItem onClick={handleClose}><Link to='/profile'>Profile</Link></MenuItem>
+								<MenuItem onClick={handleClose}><Link to='/profile' className={classes.AppBarLink}>Profile</Link></MenuItem>
 								<MenuItem onClick={handleAuth}>{auth ? 'Logout' : 'Login'}</MenuItem>
 							</Menu>
 						</Grid>
@@ -139,7 +154,7 @@ function TopBar(props) {
 					<Drawer
 						anchor={"top"}
 						open={top["top"]}
-						onClose={toggleDrawer("top", false)}
+						onClose={toggleDrawer(false)}
 					>
 						{list(routes)}
 					</Drawer>
