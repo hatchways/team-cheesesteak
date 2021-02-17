@@ -3,16 +3,16 @@ import json
 from sqlalchemy.orm.exc import NoResultFound
 from flask import Blueprint as bp
 from flask import (
-    make_response, redirect,
-    request, session,
-    url_for, g
+    make_response, request,
+    session, url_for,
+    g
 )
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     jwt_refresh_token_required, create_refresh_token,
     get_jwt_identity, set_access_cookies,
     set_refresh_cookies, unset_jwt_cookies,
-    jwt_optional, verify_jwt_in_request
+    verify_jwt_in_request
 )
 from models.user import User
 
