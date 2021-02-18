@@ -80,9 +80,9 @@ def signup():
             # response dictionary
             user_info = user.to_dict(excludes=['profile', 'password_hash'])
             user_info['profile_id'] = user.profile.id
-            username = user_info['username']
-            access_token = create_access_token(identity=username)
-            refresh_token = create_refresh_token(identity=username)
+            email = user_info['emal']
+            access_token = create_access_token(identity=email)
+            refresh_token = create_refresh_token(identity=email)
             session['user_id'] = user.id
             # Put all information in a non nested dictionary
             # which will make it easier to get info in the frontend
@@ -104,10 +104,10 @@ def signup():
 @auth_views.route('/login', methods=['POST'])
 def login():
     if request.method == "POST":
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
         try:
-            user = User.credentials_match(username, password)
+            user = User.credentials_match(email, password)
             # User was found but password failed to match
             if not user:
                 return {
@@ -117,8 +117,8 @@ def login():
             # Credentials are correct, continue
             # Clear the session for fresh data
             session.clear()
-            access_token = create_access_token(identity=username)
-            refresh_token = create_refresh_token(identity=username)
+            access_token = create_access_token(identity=email)
+            refresh_token = create_refresh_token(identity=email)
             # Build response
             response_dict = user.to_dict(excludes=['password_hash', "profile"])
             session['user_id'] = user.id
@@ -130,10 +130,10 @@ def login():
             set_access_cookies(response, access_token)
             return response
         except NoResultFound as e:
-            # User with the passed username was not found
+            # User with the passed email was not found
             return {
                 'status': 401,
-                'message': "Incorrect Username"
+                'message': "Incorrect email"
             }
         except Exception as e:
             # In case something happens with user.to_dict()
