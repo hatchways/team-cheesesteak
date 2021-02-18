@@ -122,6 +122,7 @@ def login():
             # Build response
             response_dict = user.to_dict(excludes=['password_hash', "profile"])
             session['user_id'] = user.id
+            response['profile_id'] = user.profile.id
             response_dict['status'] = 200
             response_dict['message'] = "Successfully Logged in"
             response = make_response(response_dict)
