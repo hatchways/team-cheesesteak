@@ -27,7 +27,6 @@ app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 # Register flask_jwt_extended with Flask
 jwt = JWTManager(app)
 
-app.register_blueprint(search_views)
 app.register_blueprint(home_handler)
 app.register_blueprint(ping_handler)
 app.register_blueprint(auth_views)

@@ -1,6 +1,6 @@
 
 import json
-from flask import make_response, request, Blueprint
+from flask import make_response, request, Blueprint, jsonify
 from models.recipe import Recipe
 from models.profile import Profile
 from .auth import authenticate
@@ -21,22 +21,17 @@ def search_cuisines():
     response_dict = {}
     # Make sure values were passed
     if search_by != "recipe" and search_by != "chef":
-        return {
-            'status': 404,
-            'message': "No filter was provided, select either 'by recipe' or 'by chef'" 
-        }
+        response_dict['message'] = "No filter was provided, select either 'by recipe' or 'by chef'" 
+        return jsonify(response_dict), 404
     if cuisine not in Recipe.get_cuisines() or not cuisine:
-        return {
-            'status': 404,
-            "message": "No cuisine was provided, please select a cuisine and try again"
-        }
+        response_dict['message'] = "No cuisine was provided, please select a cuisine and try again"
+        return jsonify(response_dict), 404
     # Start searching
     if search_by == "recipe":
         result = session.query(Recipe).filter(Recipe.cuisine==cuisine).all()
         if len(result) == 0:
             response_dict['message'] = "We didn't find any recipes that matched your desired cuisine, please try again!"
-            response_dict['status'] = 404
-            return response_dict
+            return jsonify(response_dict), 404
         for recipe in result:
             response_dict[str(recipe.id)] = {
                 'name': recipe.name,
@@ -52,8 +47,7 @@ def search_cuisines():
         result = session.query(Profile).join(Profile.recipes).filter(Recipe.cuisine==cuisine).all()
         if len(result) == 0:
             response_dict['message'] = "We didn't find any chefs that have recipes with that cuisine, please try again!"
-            response_dict['status'] = 404
-            return response_dict
+            return response_dict, 404
         for chef in result:
             response_dict[str(chef.id)] = {
                 'name': chef.name,
@@ -62,12 +56,5 @@ def search_cuisines():
                 "about_me": chef.about_me
             }
     # All good, make the response and return
-    response_dict['status'] = 200
-    response = make_response(response_dict)
-    return response
-
-@search_views.route("/hi", methods=["GET"])
-def hi():
-    return {
-        'message': "hello"
-    }
+    response = jsonify(response_dict)
+    return response, 200
