@@ -58,7 +58,6 @@ function TopBar(props) {
 
 	const classes = useStyles();
 	const user = useContext(UserContext)
-	const [auth, setAuth] = useState(user.role);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 
@@ -66,9 +65,6 @@ function TopBar(props) {
 	const [top, setTop] = useState({
 		top: false,
 	});
-	const handleAuth = (event) => {
-		setAuth(event.target.checked);
-	};
 
 	const handleMenu = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -87,7 +83,7 @@ function TopBar(props) {
 	};
 
 
-	const list = (anchor) => (
+	const list = () => (
 		<Grid
 			className='top'
 			role="presentation"
@@ -96,7 +92,7 @@ function TopBar(props) {
 		>
 			<List>
 				{routes.map((text, index) => (
-					<Link to={`/${text}`} className={classes.AppBarLink}>
+					<Link to={`/${text}`} className={classes.AppBarLink} key={index}>
 						<ListItem button key={text}>
 							<ListItemText primary={text} />
 						</ListItem>
@@ -117,7 +113,7 @@ function TopBar(props) {
 					<IconButton edge="start" onClick={toggleDrawer(true)} className={classes.menuButton} color="inherit" aria-label="menu">
 						<DragHandleIcon />
 					</IconButton>
-					{auth && (
+					{user && (
 						<Grid>
 							<IconButton
 								aria-label="account of current user"
@@ -144,7 +140,7 @@ function TopBar(props) {
 								onClose={handleClose}
 							>
 								<MenuItem onClick={handleClose}><Link to='/profile' className={classes.AppBarLink}>Profile</Link></MenuItem>
-								<MenuItem onClick={handleAuth}>{auth ? 'Logout' : 'Login'}</MenuItem>
+								<MenuItem>Logout</MenuItem>
 							</Menu>
 						</Grid>
 					)}
