@@ -1,17 +1,10 @@
 from sqlalchemy import (
     Column, String,
     Integer, ForeignKey,
-    Boolean, Text
+    Text, Boolean
     )
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-
-from base_model import BaseModelMixin 
-
-
-# Base model the other model(s) will subclass
-Base = declarative_base()
-
+from sqlalchemy.orm import relationship, validates
+from models.base_model import Base, BaseModelMixin
 
 class Profile(Base, BaseModelMixin):
 
@@ -25,10 +18,11 @@ class Profile(Base, BaseModelMixin):
     favourite_recipe = Column(Text)
     favourite_cuisine = Column(String, nullable = False)
     location = Column(Text, nullable = False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'))
+
  
     #relationship Profile and Recipe
-    recipe = relationship("Recipe", back_populates="profile") 
+    recipes = relationship("Recipe", backref="profile", cascade="all, delete-orphan") 
 
     @validates('is_chef')
     def validate_is_chef(self, key, is_chef):
@@ -46,5 +40,3 @@ class Profile(Base, BaseModelMixin):
     def __repr__(self):
         return f"<Profile #{self.id}: {self.name}>"
 
-    
-        
