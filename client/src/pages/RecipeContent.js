@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
     flexGrow: 1,
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: "#F8F8FF",
     alignItems: "center",
     flexDirection: "column",
   },
@@ -48,8 +48,8 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   dishPortion: {
-    color: theme.palette.primary.main,
-    backgroundColor: theme.palette.secondary.main,
+    color: "#F8F8FF",
+    backgroundColor: "#ff743d",
     marginLeft: theme.spacing(0),
   },
   dishItems: {
@@ -87,7 +87,7 @@ const RecipeContent = () => {
 
       <Grid item className={classes.recipes}>
         <Card className={classes.recipeCard}>
-          <div className={classes.description}>
+          <Grid className={classes.description}>
             <CardContent className={classes.cardContent}>
               <Chip className={classes.dishPortion} label="Meal for 2"></Chip>
               <Typography
@@ -102,7 +102,7 @@ const RecipeContent = () => {
                 Ingredients:
               </Typography>
               <Typography>Rice, Tomatoes, Pepper, Chicken stock.</Typography>
-              <div className={classes.line}></div>
+              <Grid className={classes.line}></Grid>
               <Typography className={classes.dishItems}>
                 Required Stuff:
               </Typography>
@@ -112,7 +112,7 @@ const RecipeContent = () => {
                 Edit recipe
               </Button>
             </CardContent>
-          </div>
+          </Grid>
           <CardMedia className={classes.dishImage} image={sushi}></CardMedia>
         </Card>
       </Grid>

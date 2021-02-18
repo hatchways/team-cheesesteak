@@ -1,28 +1,29 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import { Edit } from "@material-ui/icons";
-import Paper from "@material-ui/core/Paper";
-import Avatar from "@material-ui/core/Avatar";
-import Divider from "@material-ui/core/Divider";
+import {
+  Typography,
+  Grid,
+  Paper,
+  Avatar,
+  Divider,
+  Button,
+} from "@material-ui/core";
+
 import { makeStyles } from "@material-ui/core/styles";
 import chefPic from "../assets/chefPic.png";
 import chefBackground from "../assets/chefBackground.png";
+import EditProfile from "./EditProfile";
 
 const useStyles = makeStyles(theme => ({
   root: {
     minHeight: theme.spacing(80),
     backgroundColor: "#F8F8FF",
-    maxHeight: "600px",
   },
+
   sideMenu: {
     backgroundColor: "#FFF",
-    width: "100%",
-    height: "100%",
+    height: "100vh",
   },
   chefBackground: {
-    display: "flex",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
@@ -37,19 +38,26 @@ const useStyles = makeStyles(theme => ({
     height: 170,
     border: "3px solid white",
     top: "50%",
+    left: "25%",
   },
+
   chefProfile: {
-    display: "flex",
     textAlign: "center",
     alignItems: "center",
     flexDirection: "column",
-    marginTop: 115,
+    marginTop: 100,
     padding: (0, 5),
   },
+  chefLocation: {
+    color: "#a9a9a9",
+  },
+
   divider: {
     marginTop: 20,
-    minWidth: 43,
+    minWidth: 35,
+    backgroundColor: "#ff743d",
   },
+
   chefAboutMe: {
     margin: (20, 20),
   },
@@ -57,34 +65,22 @@ const useStyles = makeStyles(theme => ({
   requestButton: {
     width: "80%",
     borderRadius: 0,
-    color: theme.palette.primary.main,
+    color: "#F8F8FF",
     backgroundColor: "#FF510C",
     marginTop: 20,
     padding: 16,
-  },
-  edit: {
-    marginTop: 20,
-    borderRadius: 0,
   },
 }));
 
 const ChefContent = () => {
   const classes = useStyles();
   return (
-    <Grid
-      component="main"
-      className={classes.root}
-      item
-      xs={12}
-      sm={12}
-      md={4}
-      lg={3}
-    >
+    <Grid className={classes.root} item xs={12} sm={12} md={4} lg={3}>
       <Paper className={classes.sideMenu} elevation={1}>
         <Grid item className={classes.chefBackground}>
           <Avatar src={chefPic} className={classes.chefPic} />
         </Grid>
-        <Grid item className={classes.chefProfile}>
+        <Grid container className={classes.chefProfile}>
           <Typography variant="h6">Liz Muyi</Typography>
           <Typography variant="subtitle1" className={classes.chefLocation}>
             Toronto, Canada
@@ -101,10 +97,8 @@ const ChefContent = () => {
           >
             Send Request
           </Button>
-          <Button variant="outlined" size="large" className={classes.edit}>
-            <Edit />
-            Edit Profile
-          </Button>
+
+          <EditProfile />
         </Grid>
       </Paper>
     </Grid>

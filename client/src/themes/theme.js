@@ -10,11 +10,11 @@ export const theme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: '"Montserrat"',
+    fontFamily: '"Roboto"',
     fontSize: 13,
   },
   palette: {
-    primary: { main: "#F8F8FF" },
-    secondary: { main: "#ff743d" },
+    primary: { main: "#ff743d" },
+    secondary: { main: "#F8F8FF" },
   },
 });
