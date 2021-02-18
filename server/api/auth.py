@@ -3,12 +3,12 @@ import json
 from sqlalchemy.orm.exc import NoResultFound
 from flask import Blueprint as bp
 from flask import (
-    make_response, request,
-    session, url_for,
-    g
+    make_response,
+    jsonify, request,
+    session, g
 )
 from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
+    jwt_required, create_access_token,
     create_refresh_token, get_jwt_identity,
     set_access_cookies, set_refresh_cookies,
     unset_jwt_cookies, verify_jwt_in_request
@@ -21,22 +21,21 @@ auth_views = bp('auth', __name__, url_prefix="/auth")
 def authenticate(view):
     @functools.wraps(view)
     def decorated_function(*args, **kwargs):
+        response_dict = {}
         # First look for a user object
         if g.user is None:
-            return {
-                "status": 401,
-                "message": "You have to be logged in for that"
-            }
+            response_dict['status'] = 401
+            response_dict['message'] = "You have to be logged in for that"
+            return jsonify(response_dict), 401
         # Then validate the token
         try:
             # This will raise an error if the token
             # is not valid is some way
             verify_jwt_in_request()
         except:
-            return {
-                'status': 401,
-                'message': "Invalid Token"
-            }
+            response_dict['status'] = 401
+            response_dict['message'] = "Invalid token"
+            return jsonify(response_dict), 401
         return view(*args, **kwargs)
     return decorated_function
 
@@ -52,6 +51,7 @@ def load_logged_in_user():
 def signup():
     if request.method == "POST":
         request_dict = request.form.to_dict()
+        response_dict = {}
         user_info = {}
         for field in User.get_fields():
             if field == "id":
@@ -80,67 +80,66 @@ def signup():
             # response dictionary
             user_info = user.to_dict(excludes=['profile', 'password_hash'])
             user_info['profile_id'] = user.profile.id
-            email = user_info['emal']
+            email = user.email
             access_token = create_access_token(identity=email)
             refresh_token = create_refresh_token(identity=email)
             session['user_id'] = user.id
             # Put all information in a non nested dictionary
             # which will make it easier to get info in the frontend
-            user_info['status'] = 201
-            user_info['message'] = "Successfully created account!"
-            user_info['login'] = True
-            response = make_response(user_info)
+            response_dict['status'] = 201
+            response_dict['message'] = "Successfully created account!"
+            response_dict['login'] = True
+            response_dict['user'] = user_info
+            response = make_response(response_dict)
             # Set JWT cookies
             set_access_cookies(response, access_token)
             set_refresh_cookies(response, refresh_token)
-            return response
+            return response, 200
         except AssertionError as e:
+            response_dict['status'] = 401
+            response_dict['message'] = "%s" % (e)
             # Validation problem
-            return {
-                'status': 401,
-                'message': "%s" % (e)
-            }
+            return jsonify(response_dict), 401
 
 @auth_views.route('/login', methods=['POST'])
 def login():
     if request.method == "POST":
+        response_dict = {}
         email = request.form['email']
         password = request.form['password']
         try:
             user = User.credentials_match(email, password)
             # User was found but password failed to match
             if not user:
-                return {
-                    'status': 401,
-                    'message': "Incorrect Password"
-                }
+                response_dict['status'] = 401
+                response_dict['message'] = "Incorrect Password"
+                return jsonify(response_dict), 401
             # Credentials are correct, continue
             # Clear the session for fresh data
             session.clear()
             access_token = create_access_token(identity=email)
             refresh_token = create_refresh_token(identity=email)
             # Build response
-            response_dict = user.to_dict(excludes=['password_hash', "profile"])
+            user_dict = user.to_dict(excludes=['password_hash', "profile"])
+            user_dict['profile_id'] = user.profile.id
+            response_dict['user'] = user_dict
             session['user_id'] = user.id
-            response['profile_id'] = user.profile.id
             response_dict['status'] = 200
             response_dict['message'] = "Successfully Logged in"
             response = make_response(response_dict)
             # Set JWT cookies
             set_access_cookies(response, access_token)
-            return response
+            return response, 200
         except NoResultFound as e:
+            response_dict['status'] = 401
+            response_dict['message'] = "Incorrect Email"
             # User with the passed email was not found
-            return {
-                'status': 401,
-                'message': "Incorrect email"
-            }
+            return jsonify(response_dict), 401
         except Exception as e:
+            response_dict['status'] = 400
+            response_dict['message'] = "An unknown error occured ERROR: %s" % (e)
             # In case something happens with user.to_dict()
-            return {
-                'status': 400,
-                'message': f"An unknown error occured ERROR: {e}"
-            }
+            return jsonify(response_dict), 400
 
 @auth_views.route('/logout')
 def logout():
@@ -148,11 +147,11 @@ def logout():
     response_dict = {'logout': True}
     response_dict['status'] = 200
     response_dict['message'] = "Successfully logged out"
-    response = make_response(response_dict)
+    response = jsonify(response_dict)
     # Remove cookies and clear the session
     unset_jwt_cookies(response)
     session.clear()
-    return response
+    return response, 200
 
 
 
@@ -161,7 +160,8 @@ def logout():
 def refresh_jwt_token():
     current_user = get_jwt_identity()
     access_token = create_access_token(identity=current_user)
-    response = {'refresh': True}
+    response_dict = {'refresh': True}
+    response_dict['status'] = 200
+    response = jsonify(response_dict)
     set_access_cookies(response, access_token)
-    response['status'] = 200
-    return response
+    return response, 200
