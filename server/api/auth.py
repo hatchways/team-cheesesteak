@@ -3,6 +3,7 @@ import json
 from sqlalchemy.orm.exc import NoResultFound
 from flask import Blueprint as bp
 from flask import (
+    make_response,
     jsonify, request,
     session, g
 )
@@ -89,7 +90,7 @@ def signup():
             response_dict['message'] = "Successfully created account!"
             response_dict['login'] = True
             response_dict['user'] = user_info
-            response = jsonify(response_dict)
+            response = make_response(response_dict)
             # Set JWT cookies
             set_access_cookies(response, access_token)
             set_refresh_cookies(response, refresh_token)
@@ -125,7 +126,7 @@ def login():
             session['user_id'] = user.id
             response_dict['status'] = 200
             response_dict['message'] = "Successfully Logged in"
-            response = jsonify(response_dict), 200
+            response = make_response(response_dict)
             # Set JWT cookies
             set_access_cookies(response, access_token)
             return response, 200
