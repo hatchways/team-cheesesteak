@@ -9,7 +9,6 @@ import {
   CardMedia,
   Chip,
 } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
 import sushi from "../assets/sushi.png";
 
 const useStyles = makeStyles(theme => ({
@@ -107,10 +106,6 @@ const RecipeContent = () => {
                 Required Stuff:
               </Typography>
               <Typography>Kitchen, plates.</Typography>
-              <Button className={classes.dishEdit} variant="outlined">
-                <Edit />
-                Edit recipe
-              </Button>
             </CardContent>
           </Grid>
           <CardMedia className={classes.dishImage} image={sushi}></CardMedia>

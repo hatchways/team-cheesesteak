@@ -11,7 +11,6 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import chefPic from "../assets/chefPic.png";
 import chefBackground from "../assets/chefBackground.png";
-// import EditProfile from "./EditProfile";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -90,15 +89,13 @@ const ChefContent = () => {
             taste.
           </Typography>
           <Button
+            color="primary"
             variant="contained"
             fullwidth
-            color="primary"
             className={classes.requestButton}
           >
             Send Request
           </Button>
-
-          {/* <EditProfile /> */}
         </Grid>
       </Paper>
     </Grid>
