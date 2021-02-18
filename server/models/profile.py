@@ -35,6 +35,13 @@ class Profile(Base, BaseModelMixin):
         if not isinstance(is_chef, bool):
             raise AssertionError(f"Expected field 'is_chef' to be a boolean but got {type(is_chef)}")
         return is_chef
+    
+    @validates('favourite_cuisine')
+    def validate_ingredients(self, key, favourite_cuisine):
+        if not isinstance(favourite_cuisine, list):
+            raise AssertionError(f"Expected field 'favourite_cuisine' to be of type list but got {type(favourite_cuisine)}")
+        stringified_favourite_cuisine= ",".join(favourite_cuisine)
+        return stringified_favourite_cuisine
 
     def __repr__(self):
         return f"<Profile #{self.id}: {self.name}>"
