@@ -43,7 +43,7 @@ def print_info(users, profiles, recipes):
     print("\n\nCompleted creating objects\n\n")
 
 # Seed script
-def seed_database():
+def seed_database(debug=False):
     """
     WARNING: This will NOT create the tables for you if you
     dropped your entire database. You must re-create the database
@@ -66,6 +66,16 @@ def seed_database():
     objects to be associated with the profile object. Leave some profile
     objects without any recipes for filter testing.
     """
+    if debug:
+        # If something happened during object creation
+        # we'll get a UNIQUE CONSTRAINT FAILED error
+        # when trying again so, delete all the records 
+        # in the database and try to create the objects.
+        # so we can preserve the existing tables
+        from models.base_model import Base
+        from db import engine
+        for tbl in reversed(Base.metadata.sorted_tables):
+            engine.execute(tbl.delete())
 
     # Create how ever many user and profile objects the user defined
     user_dicts =[
@@ -75,7 +85,6 @@ def seed_database():
             "state_or_province": "Massachusetts",
             'country': "United States",
             'zip_code': "01001",
-            'username': "SlayrFreex",
             'email': "slayit@gmail.com",
             'password': "Testing123",
         },
@@ -85,7 +94,6 @@ def seed_database():
             'state_or_province': "Massachusetts",
             'country': "United States",
             'zip_code': "20194",
-            'username': "Foodie892",
             'email': "foodgood@aol.com",
             'password': "Testing123"
 
@@ -96,7 +104,6 @@ def seed_database():
             'state_or_province': "Ontario",
             'country': "Canada",
             'zip_code': "A1A 1A1",
-            'username': "FoodGod@foodie.com",
             'email': "imAchef@food.org",
             'password': "Testing123"
         },
@@ -109,7 +116,7 @@ def seed_database():
             "location": "Massachusettes, United States",
             'profile_image': "https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
             'favourite_recipe': "Spicy Pork Tenderloin with Apples and Sweet Potatoes",
-            'favourite_cuisine': "italian",
+            'favourite_cuisine': "italian,",
         },
         {
             'name': "Mario",
@@ -118,7 +125,7 @@ def seed_database():
             "location": "Massachusettes, United States",
 
             'profile_image': "https://images.unsplash.com/photo-1521341057461-6eb5f40b07ab?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
-            'favourite_cuisine': "thai",
+            'favourite_cuisine': "thai,",
         },
         {
             'name': "Tessa",
@@ -126,7 +133,7 @@ def seed_database():
             'about_me': "I'm not a chef but wish I was, I couldn't boil noodles without burning them!",
             "location": "Ontario, Canada",
             'profile_image': "https://images.unsplash.com/photo-1505999407077-7937810b98ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1188&q=80",
-            'favourite_cuisine': "Mexican"
+            'favourite_cuisine': "Mexican,"
         }
     ]
 
@@ -148,7 +155,7 @@ def seed_database():
             'cuisine': "indian",
             'price': 1000,
             'ingredients': "Pork Tenderloin,Green Apples,Sweet Potatoes,Rosemary",
-            'required_items': "Dinner Plate, Kitchen Table, Oven",
+            'required_items': "Dinner Plate,Kitchen Table,Oven",
             'image_urls': "https://images.unsplash.com/photo-1501200291289-c5a76c232e5f?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxleHBsb3JlLWZlZWR8M3x8fGVufDB8fHw%3D&auto=format&fit=crop&w=1000&q=60,"
         },
         {

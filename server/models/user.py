@@ -30,7 +30,6 @@ class User(Base, BaseModelMixin):
     zip_code = Column(String(12), default="Not entered")
 
     # Auth
-    username = Column(String(50), unique=True, nullable=False)
     email = Column(String(150), index=True, unique=True, nullable=False)
     password_hash = Column(String(128), nullable=False)
 
@@ -51,14 +50,14 @@ class User(Base, BaseModelMixin):
         return check_password_hash(self.password_hash, password)
 
     @staticmethod
-    def credentials_match(username, password):
+    def credentials_match(email, password):
         """
-        First get the user by using the given username,
+        First get the user by using the given email,
         then use the user.
         Return True if the credentials are correct
         False otherwise
         """
-        user = User.get_by_username(username)
+        user = User.get_by_email(email)
         # If the password is a match, return the user
         # Otherwise return None
         if user.check_password(password):
@@ -66,13 +65,13 @@ class User(Base, BaseModelMixin):
         return None
 
     @staticmethod
-    def get_by_username(username):
+    def get_by_email(email):
         """
         Return a user instance or raise a NoResultFound exception
         """
-        user = session.query(User).filter(User.username == username).first()
+        user = session.query(User).filter(User.email == email).first()
         if not user:
-            raise NoResultFound("User with username %s does not exist" % (username))
+            raise NoResultFound("User with email %s does not exist" % (email))
         return user
 
     # Properties
@@ -110,16 +109,6 @@ class User(Base, BaseModelMixin):
         return "%s, %s" % (self.state_or_province, self.country)
 
     # Field Validation -- Executes when setting fields
-
-    @validates('username')
-    def validate_username(self, key, username):
-        if not username:
-            raise AssertionError('No username provided')
-        if User.instance_exists(**{'username': username}):
-            raise AssertionError('Username is already in use')
-        if len(username) < 5 or len(username) > 50:
-            raise AssertionError('Username must be between 5 and 20 characters')
-        return username
     
     @validates('email')
     def validate_email(self, key, email):
@@ -182,5 +171,5 @@ class User(Base, BaseModelMixin):
         return zip_code
 
     def __repr__(self):
-        return "<User(username='%s')>" % (self.username)
+        return "<User(email='%s')>" % (self.email)
 
