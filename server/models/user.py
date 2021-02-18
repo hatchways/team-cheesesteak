@@ -23,11 +23,11 @@ class User(Base, BaseModelMixin):
 
     # Split up the address to make finding location radius easier
     # Also makes displaying info easier
-    street_address = Column(String(150), nullable=False)
-    city = Column(String(30), nullable=False)
-    state_or_province = Column(String(30), nullable=False)
-    country = Column(String(30), nullable=False)
-    zip_code = Column(String(12), nullable=False)
+    street_address = Column(String(150), default="Not entered")
+    city = Column(String(30), default="Not entered")
+    state_or_province = Column(String(30), default="Not entered")
+    country = Column(String(30), default="Not entered")
+    zip_code = Column(String(12), default="Not entered")
 
     # Auth
     username = Column(String(50), unique=True, nullable=False)
