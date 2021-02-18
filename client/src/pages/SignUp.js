@@ -16,7 +16,7 @@ const regPattern = new RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i);
 
 const signUpPageStyle = (theme) => ({
   signUpContainer: {
-    fontFamily: '"Montserrat"',    
+    fontFamily: '"Roboto"',    
     height: "100vh",
   },
   title: {
