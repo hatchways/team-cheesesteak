@@ -135,6 +135,7 @@ def login():
             response_dict['message'] = "Incorrect Email"
             # User with the passed email was not found
             return jsonify(response_dict), 401
+
         except Exception as e:
             response_dict['status'] = 400
             response_dict['message'] = "An unknown error occured ERROR: %s" % (e)
