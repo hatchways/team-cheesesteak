@@ -7,5 +7,8 @@ export const theme = createMuiTheme({
   primary: "#f04040",
   secondary: "#1f1f1f",
   error: "#d8000c",
-  bgcolor: "#f6f6f6"
+  main: "#FF743D",
+  light: "#FF510C",
+  // Background color from the "fonts+colors.docx" google drive doc.
+  bgcolor: "#F8F8FF"
 });
