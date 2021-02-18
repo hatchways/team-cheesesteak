@@ -31,14 +31,3 @@ jwt = JWTManager(app)
 app.register_blueprint(home_handler)
 app.register_blueprint(ping_handler)
 app.register_blueprint(auth_views)
-
-@jwt.user_loader_error_loader
-def custom_user_loader_error(identity):
-    """
-    Identity is set to be the username
-    Make a more user friendly error
-    """
-    return  {
-        'status': 404,
-        "message": "User with username %s not found" % (identity)
-    }

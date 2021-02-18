@@ -1,16 +1,10 @@
 from sqlalchemy import (
     Column, String,
     Integer, ForeignKey,
-    Boolean, Text,
-    Float
+    Text, Boolean
     )
-from sqlalchemy.orm import relationship, validates
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm.exc import NoResultFound
-from base_model import BaseModelMixin 
-
-# Base model the other model(s) will subclass
-Base = declarative_base()
+from sqlalchemy.orm import validates
+from models.base_model import Base, BaseModelMixin
 
 class Recipe(Base, BaseModelMixin):
     """
@@ -40,9 +34,9 @@ class Recipe(Base, BaseModelMixin):
     id = Column(Integer, primary_key=True)
 
     # Relationships
-    chef_profile_id = Column(Integer, ForeignKey('profile.id'))
-    chef_profile = relationship('Profile')
-
+    profile_id = Column(Integer, ForeignKey('profile.id'))
+    #profile = relationship("Profile", back_populates="recipes")
+    
     # All fields are required hence nullable=False
     # General Info -- No length constraints because they
     # could all end up being fairly long
@@ -54,18 +48,13 @@ class Recipe(Base, BaseModelMixin):
 
     # These store lists as strings in CSV format
     ingredients = Column(Text, nullable=False)
-    required_items = Column(Text, nullable=False)
+    required_items = Column(Text)
     image_urls = Column(Text, nullable=False)
-
-    # TODO Validation for cuisine which 
-    # requires a predefined list of cuisines
-    # Which will also allow a select drop box to be used
-    # instead of an input box
 
     @validates('price')
     def validate_price(self, key, price):
         if not isinstance(price, int):
-            raise AssertionError(f"Expected price to be of type integer but got {type(price)}")
+            raise AssertionError("Expected price to be of type integer but got %s" % (type(price)))
         new_price = price * 100
         return new_price
 
@@ -75,24 +64,27 @@ class Recipe(Base, BaseModelMixin):
         Make sure we were passed a list
         Convert it to a string and return it
         """
-        if not isinstance(image_urls, list):
-            raise AssertionError(f"Expected field 'image_urls' to be of type list but got {type(image_urls)}")
-        stringified_urls = ",".join(image_urls)
-        return stringified_urls
+        if "," not in image_urls:
+            raise AssertionError("Expected field 'image_urls' to be in CSV format")
+        if not isinstance(image_urls, str):
+            raise AssertionError("Expected field 'image_urls' to be a string in CSV format but got a %s instead" % (type(image_urls)))
+        return image_urls
 
     @validates('ingredients')
     def validate_ingredients(self, key, ingredients):
-        if not isinstance(ingredients, list):
-            raise AssertionError(f"Expected field 'ingredients' to be of type list but got {type(ingredients)}")
-        stringified_ingredients = ",".join(ingredients)
-        return stringified_ingredients
+        if "," not in ingredients:
+            raise AssertionError("Expected field 'ingredients' to be in CSV format")
+        if not isinstance(ingredients, str):
+            raise AssertionError("Expected field 'ingredients' to be a string in CSV format but got a %s instead" % (type(ingredients)))
+        return ingredients
 
     @validates('required_items')
     def validate_required_items(self, key, required_items):
-        if not isinstance(required_items, list):
-            raise AssertionError(f"Expected field 'required_items' to be of type list but got {type(required_items)}")
-        stringified_required_items = ",".join(required_items)
-        return stringified_required_items
+        if "," not in required_items:
+            raise AssertionError("Expected field 'required_items' in CSV format")
+        if not isinstance(required_items, str):
+            raise AssertionError("Expected field 'required_items' to be a string in CSV format but got a %s instead" % (type(required_items)))
+        return required_items
 
     @validates('available')
     def validate_available(self, key, available):
@@ -102,16 +94,45 @@ class Recipe(Base, BaseModelMixin):
         true Boolean.
         """
         if not isinstance(available, bool):
-            raise AssertionError(f"Expected field 'available' to be a boolean but got {type(available)}")
+            raise AssertionError("Expected field 'available' to be a boolean but got %s" % (type(available)))
         return available
 
-    @property
+    @validates('cuisine')
+    def validate_cuisine(self, key, cuisine):
+        """
+        Make sure the cuisine is an existing one for more uniform
+        models, easier drop downs, and so the user doesn't need
+        to worry about typos or anything
+        """
+        if not cuisine:
+            raise AssertionError("No cuisine was provided")
+        if cuisine.lower() not in self.get_cuisines():
+            raise AssertionError("The given cuisine '%s' is not in the list of accepted cuisines, please try again" % (cuisine))
+        return cuisine
 
+    @staticmethod
+    def get_cuisines():
+        cuisines = [
+            "indonesian",
+            "turkish",
+            "thai",
+            "spanish",
+            "moroccan",
+            "japanese",
+            "indian",
+            "italian",
+            "french",
+            "english"
+        ]
+        return cuisines
+
+
+    @property
     def get_formatted_price(self):
         """
         For use in displaying a price in $19.26 format to a user
         """
-        return f"${self.price/100}"
+        return "$%s" % (self.price/100)
 
     @property
     def get_image_url_list(self):
@@ -125,21 +146,10 @@ class Recipe(Base, BaseModelMixin):
     def get_utensil_list(self):
         return self.required_items.split(',')
 
-    @property
-    def get_chef_profile(self):
-        """
-        We can use this to link to a chefs profile if a
-        user decides to browse all recipes instead of going
-        directly to a chefs profile.
-        """
-        # This *should* return the instance due to backref="profle" 
-        # (if it was added to the profile) being used in the profile model.
-        # This needs tested though
-        return self.chef_profile
 
     def __repr__(self):
         """
         self.chef_profile.user.name SHOULD yield the name of the user that
         owns the profile associated with this recipe but needs tested
         """
-        return "<Recipe(chef='%s', name=%s)>" % (self.chef_profile.user.username, self.name)
+        return "<Recipe(name=%s ID=%s)>" % (self.name, self.id)

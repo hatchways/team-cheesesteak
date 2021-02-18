@@ -9,10 +9,9 @@ from flask import (
 )
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
-    jwt_refresh_token_required, create_refresh_token,
-    get_jwt_identity, set_access_cookies,
-    set_refresh_cookies, unset_jwt_cookies,
-    verify_jwt_in_request
+    create_refresh_token, get_jwt_identity,
+    set_access_cookies, set_refresh_cookies,
+    unset_jwt_cookies, verify_jwt_in_request
 )
 from models.user import User
 
@@ -105,7 +104,7 @@ def login():
             access_token = create_access_token(identity=username)
             refresh_token = create_refresh_token(identity=username)
             # Build response
-            response_dict = user.to_dict(excludes=['password_hash'])
+            response_dict = user.to_dict(excludes=['password_hash', "profile"])
             session['user_id'] = user.id
             response_dict['status'] = 200
             response_dict['message'] = "Successfully Logged in"
@@ -139,8 +138,9 @@ def logout():
     return response
 
 
+
 @auth_views.route('/token/refresh')
-@jwt_refresh_token_required
+@jwt_required(refresh=True)
 def refresh_jwt_token():
     current_user = get_jwt_identity()
     access_token = create_access_token(identity=current_user)
