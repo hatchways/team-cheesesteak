@@ -8,9 +8,12 @@ from sqlalchemy.orm import relationship, validates, backref
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from db import session
 from models.base_model import Base, BaseModelMixin
-
+# Initialize the other models to prevent an issue with
+# the database
+from models.recipe import Recipe
+from models.profile import Profile
 
 
 class User(Base, BaseModelMixin):
@@ -35,6 +38,33 @@ class User(Base, BaseModelMixin):
     # This requires the Profile model to link back to the user model
     profile = relationship("Profile", uselist=False, backref="user", cascade="all, delete-orphan")
 
+    def set_password(self, password):
+        if not password:
+            raise AssertionError('Password not provided')
+        if not re.match('\d.*[A-Z]|[A-Z].*\d', password):
+            raise AssertionError('Password must contain 1 capital letter and 1 number')
+        if len(password) < 8 or len(password) > 50:
+            raise AssertionError('Password must be between 8 and 50 characters')
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    @staticmethod
+    def credentials_match(username, password):
+        """
+        First get the user by using the given username,
+        then use the user.
+        Return True if the credentials are correct
+        False otherwise
+        """
+        user = User.get_by_username(username)
+        # If the password is a match, return the user
+        # Otherwise return None
+        if user.check_password(password):
+            return user
+        return None
+
     @staticmethod
     def get_by_username(username):
         """
@@ -42,7 +72,7 @@ class User(Base, BaseModelMixin):
         """
         user = session.query(User).filter(User.username == username).first()
         if not user:
-            raise NoResultFound(f"User with username {username} does not exist")
+            raise NoResultFound("User with username %s does not exist" % (username))
         return user
 
     # Properties
@@ -53,7 +83,7 @@ class User(Base, BaseModelMixin):
         Return a full address for the user such as...
         123 Main Street, Columbus, Ohio, United States, 45796
         """
-        return f"{self.get_street_and_city}, {self.state_or_province}, {self.country}, {self.zip_code}"
+        return "%s, %s, %s, %s" % (self.get_street_and_city, self.state_or_province, self.country, self.zip_code)
 
     @property
     def get_street_and_city(self):
@@ -61,7 +91,7 @@ class User(Base, BaseModelMixin):
         Return only the street address and city such as...
         123 Main Street, Columbus
         """
-        return f"{self.street_address}, {self.city}"
+        return "%s, %s" % (self.street_address, self.city)
     
     @property
     def get_city_and_province(self):
@@ -69,7 +99,7 @@ class User(Base, BaseModelMixin):
         Return only the city and state/province such as...
         Columbus, Ohio
         """
-        return f"{self.city}, {self.state_or_province}"
+        return "%s, %s" % (self.city, self.state_or_province)
 
     @property
     def get_province_and_country(self):
@@ -77,7 +107,7 @@ class User(Base, BaseModelMixin):
         Return only the state/province and country such as...
         Ohio, United States
         """
-        return f"{self.state_or_province}, {self.country}"
+        return "%s, %s" % (self.state_or_province, self.country)
 
     # Field Validation -- Executes when setting fields
 
