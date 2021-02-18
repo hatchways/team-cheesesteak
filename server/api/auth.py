@@ -14,6 +14,7 @@ from flask_jwt_extended import (
     unset_jwt_cookies, verify_jwt_in_request
 )
 from models.user import User
+from models.profile import Profile
 
 auth_views = bp('auth', __name__, url_prefix="/auth")
 
@@ -58,12 +59,27 @@ def signup():
             if field == "password_hash":
                 user_info['password'] = request_dict['password']
                 continue
-            user_info[field] = request_dict[field]
+            if request_dict.get(field, None) != None:
+                user_info[field] = request_dict[field]
         try:
             user = User.create(**user_info)
+            # New profile info
+            placeholder_info = {
+                'name': "Not entered",
+                'is_chef': False,
+                "about_me": "Not entered",
+                "profile_image": "No image uploaded",
+                "favourite_recipe": "None yet,",
+                "favourite_cuisine": "None yet,",
+                "location": "Unknown Location"
+            }
+            profile = Profile.create(**placeholder_info)
+            user.assign_one_to_one("profile", profile)
             # Since we're sending all the information back
             # to the front end, use the user_info dict as a
             # response dictionary
+            user_info = user.to_dict(excludes=['profile', 'password_hash'])
+            user_info['profile_id'] = user.profile.id
             username = user_info['username']
             access_token = create_access_token(identity=username)
             refresh_token = create_refresh_token(identity=username)
