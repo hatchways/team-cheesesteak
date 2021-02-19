@@ -9,8 +9,8 @@ import {
 } from "@material-ui/core";
 import { Link, Route, Redirect, useHistory } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
-import BackgroundImg from "../assets/images/signUpBkg.png";
-import ChefsMenuLogo from "../assets/images/Logo.png";
+import BackgroundImg from "../Assets/images/signUpBkg.png";
+import ChefsMenuLogo from "../Assets/images/Logo.png";
 import UserContext from "../context/User";
 
 const signInPageStyle = (theme) => ({

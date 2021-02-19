@@ -9,7 +9,7 @@ import {
   Button,
   Typography,
 } from '@material-ui/core';
-import profile_pic from '../assets/woman_profile.png';
+import profile_pic from '../Assets/woman_profile.png';
 import UserContext, { handleData } from "../context/User";
 
 const useStyles = makeStyles((theme) => ({
