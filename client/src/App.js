@@ -1,14 +1,19 @@
 import React from "react";
 import { MuiThemeProvider } from "@material-ui/core";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import { theme } from "./themes/theme";
+
 import UserContext from "./context/User"
 
 import LandingPage from "./pages/Landing";
 import TopBar from "./components/TopBar";
 
+import LandingPage from "./pages/Landing";
+import ProfilePage from "./pages/UserProfile";
 import "./App.css";
+import SignUpPage from "./pages/SignUp";
+import SignInPage from "./pages/SignIn";
 
 function App() {
   const user = {
@@ -26,6 +31,9 @@ function App() {
         <BrowserRouter>
           <TopBar />
           <Route path="/" component={LandingPage} />
+          <Route path="/user_profile" component={ProfilePage}/>
+          <Route path="/signin" component={SignInPage} />
+          <Route path="/signup" component={SignUpPage} />
         </BrowserRouter>
       </UserContext.Provider>
     </MuiThemeProvider>
