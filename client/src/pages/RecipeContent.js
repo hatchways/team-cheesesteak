@@ -9,7 +9,7 @@ import {
   CardMedia,
   Chip,
 } from "@material-ui/core";
-import sushi from "../assets/sushi.png";
+import sushi from "../Assets/sushi.png";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,6 +50,7 @@ const useStyles = makeStyles(theme => ({
     color: "#F8F8FF",
     backgroundColor: "#ff743d",
     marginLeft: theme.spacing(0),
+    borderRadius: 0,
   },
   dishItems: {
     textTransform: "uppercase",
