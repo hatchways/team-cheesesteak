@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Button,
   Typography,
@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import BackgroundImg from "../Assets/images/signUpBkg.png";
 import ChefsMenuLogo from "../Assets/images/Logo.png";
+import AuthContext from "../context/Auth";
 
 const signInPageStyle = (theme) => ({
   signInContainer: {
@@ -66,10 +67,22 @@ const signInPageStyle = (theme) => ({
 
 const SignInPage = (props) => {
   const { classes } = props;
+
+  const { user, setUser } = useContext(AuthContext)
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [msg, setMsg] = useState("User/Password doesn't exist.");
+  const handleSignIn = (e) => {
+    fetch('/auth/login').then(response => response.json()).then(data => {
+      if (data.status === 200) {
+        setUser(data.user);
+      } else {
+        return setMsg(msg);
+      }
+    })
+  }
 
-  console.log(email, password); // Just added for now to avoid the warning saying both are assigned, but not used.
   return (
     <Grid container direction="row" className={classes.signInContainer}>
       <Grid item md={6} sm={12}>
@@ -119,7 +132,12 @@ const SignInPage = (props) => {
                       />
                     </Grid>
                     <Grid item>
-                      <Button type="submit" className={classes.button}>
+                      <Button
+                        onClick={(e) => {
+                          setUser({ username: 'Meme', type: 'chef' });
+                          console.log(user)
+                        }}
+                        className={classes.button}>
                         Sign In
                       </Button>
                     </Grid>
@@ -148,6 +166,8 @@ const SignInPage = (props) => {
                 </Button>
               </Link>
             </Typography>
+            <Typography>{msg}</Typography>
+
           </Grid>
         </Grid>
       </Grid>

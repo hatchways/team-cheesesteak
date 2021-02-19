@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { MuiThemeProvider } from "@material-ui/core";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import { theme } from "./themes/theme";
 
-import UserContext from "./context/User"
+import AuthContext from "./context/Auth"
 
 import TopBar from "./components/TopBar";
 
@@ -14,18 +14,12 @@ import SignInPage from "./pages/SignIn";
 import "./App.css";
 
 function App() {
-  const user = {
-    FName: 'Pierre',
-    LName: 'Smith',
-    Province: 'Ontario',
-    PostalCode: 'M4C 2R2',
-    City: 'Toronto',
-    role: 'Chef',
-  }
+  const [user, setUser] = useState(null);
+  const value = { user, setUser };
 
   return (
     <MuiThemeProvider theme={theme}>
-      <UserContext.Provider value={user}>
+      <AuthContext.Provider value={value}>
         <BrowserRouter>
           <TopBar />
           <Route path="/" component={SignInPage} />
@@ -33,7 +27,7 @@ function App() {
           <Route path="/signin" component={SignInPage} />
           <Route path="/signup" component={SignUpPage} />
         </BrowserRouter>
-      </UserContext.Provider>
+      </AuthContext.Provider>
     </MuiThemeProvider>
   );
 }

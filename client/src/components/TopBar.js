@@ -19,7 +19,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import { Link } from "react-router-dom";
 
-import UserContext from '../context/User'
+import AuthContext from '../context/Auth'
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 function TopBar(props) {
 
 	const classes = useStyles();
-	const user = useContext(UserContext)
+	const auth = useContext(AuthContext)
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 
