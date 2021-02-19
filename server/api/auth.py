@@ -50,8 +50,10 @@ def load_logged_in_user():
 @auth_views.route("/signup", methods=["POST"])
 def signup():
     if request.method == "POST":
-        request_dict = request.form.to_dict()
+        request_dict = request.get_json()
+        response_dict = {}
         user_info = {}
+        name = request_dict['name']
         for field in User.get_fields():
             if field == "id":
                 continue
@@ -61,6 +63,18 @@ def signup():
             user_info[field] = request_dict[field]
         try:
             user = User.create(**user_info)
+            # New profile info
+            placeholder_info = {
+                'name': name,
+                'is_chef': False,
+                "about_me": "Not entered",
+                "profile_image": "No image uploaded",
+                "favourite_recipe": "None yet,",
+                "favourite_cuisine": "None yet,",
+                "location": "Unknown Location"
+            }
+            profile = Profile.create(**placeholder_info)
+            user.assign_one_to_one("profile", profile)
             # Since we're sending all the information back
             # to the front end, use the user_info dict as a
             # response dictionary
@@ -70,15 +84,20 @@ def signup():
             session['user_id'] = user.id
             # Put all information in a non nested dictionary
             # which will make it easier to get info in the frontend
-            user_info['status'] = 201
-            user_info['message'] = "Successfully created account!"
-            user_info['login'] = True
-            response = make_response(user_info)
+            response_dict['status'] = 201
+            response_dict['message'] = "Successfully created account!"
+            response_dict['login'] = True
+            response_dict['user'] = user_info
+            response_dict['user']['profile'] = profile.to_dict(excludes=['user_id', 'recipes', 'user'])
+            response = make_response(response_dict)
             # Set JWT cookies
             set_access_cookies(response, access_token)
             set_refresh_cookies(response, refresh_token)
             return response
         except AssertionError as e:
+            User.do_rollback()
+            response_dict['status'] = 401
+            response_dict['message'] = "%s" % (e)
             # Validation problem
             return {
                 'status': 401,
@@ -88,8 +107,10 @@ def signup():
 @auth_views.route('/login', methods=['POST'])
 def login():
     if request.method == "POST":
-        username = request.form['username']
-        password = request.form['password']
+        response_dict = {}
+        req = request.get_json()
+        email = req['email']
+        password = req['password']
         try:
             user = User.credentials_match(username, password)
             # User was found but password failed to match
@@ -104,7 +125,11 @@ def login():
             access_token = create_access_token(identity=username)
             refresh_token = create_refresh_token(identity=username)
             # Build response
-            response_dict = user.to_dict(excludes=['password_hash', "profile"])
+            user_dict = user.to_dict(excludes=['password_hash', "profile"])
+            profile_dict = user.profile.to_dict(excludes=['recipes', 'user_id', 'user'])
+            user_dict['profile_id'] = user.profile.id
+            response_dict['user'] = user_dict
+            response_dict['user']['profile'] = profile_dict
             session['user_id'] = user.id
             response_dict['status'] = 200
             response_dict['message'] = "Successfully Logged in"

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {
   Avatar,
   Grid,
@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import profile_pic from '../assets/woman_profile.png';
+import UserContext, { handleData } from "../context/User";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -128,10 +129,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function ProfilePage(props) {
-  const map =
-    'https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png';
-  const bio =
-    "Hi everyone, I'm a foodie, I love food, oh so much, oh so oh so much.";
+  const {user, setUser} = useContext(UserContext);
+  const map ='https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png';
   const classes = useStyles();
   return (
     <Grid container xs={12} className={classes.outerGrid}>
@@ -147,15 +146,15 @@ export default function ProfilePage(props) {
               className={classes.cardHeadLeft}
             >
               <Avatar
-                src={profile_pic}
+                src={user.profile.profile_image}
                 className={classes.cardHeadAvatar}
                 borderColor="white"
               />
               <Typography variant="h6" className={classes.cardHeadName}>
-                Regina Phelangi
+                {user.profile.name}
               </Typography>
               <Typography className={classes.cardHeadLocation}>
-                Ontario, Canada
+                {user.profile.city}, {user.profile.country}
               </Typography>
               <Button className={classes.cardSendMessage}>Send Message</Button>
             </Grid>
@@ -178,7 +177,7 @@ export default function ProfilePage(props) {
                   >
                     ABOUT ME:
                   </Typography>
-                  <Typography className={classes.biography}>{bio}</Typography>
+                  <Typography className={classes.biography}>{user.profile.about_me}</Typography>
                 </Typography>
                 <Grid xs={12} sm={12} className={classes.cardFavorites}>
                   <Typography

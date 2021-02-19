@@ -200,3 +200,7 @@ class BaseModelMixin(object):
         setattr(self, field, instance)
         session.add(self)
         session.commit()
+
+    @staticmethod
+    def do_rollback():
+        session.rollback()
