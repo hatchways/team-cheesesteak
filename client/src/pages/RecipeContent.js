@@ -9,7 +9,7 @@ import {
   CardMedia,
   Chip,
 } from "@material-ui/core";
-import sushi from "../Assets/sushi.png";
+import sushi from "../assets/sushi.png";
 
 const useStyles = makeStyles(theme => ({
   root: {

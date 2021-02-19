@@ -13,9 +13,6 @@ import ChefProfile from "./pages/ChefProfile";
 import SignUpPage from "./pages/SignUp";
 import SignInPage from "./pages/SignIn";
 import "./App.css";
-import SignUpPage from "./pages/SignUp";
-import SignInPage from "./pages/SignIn";
-import ChefProfile from "./pages/ChefProfile";
 
 function App() {
   const [user, setUser] = useState("");
