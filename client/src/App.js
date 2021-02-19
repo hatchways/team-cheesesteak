@@ -6,14 +6,12 @@ import { theme } from "./themes/theme";
 
 import UserContext from "./context/User"
 
-import LandingPage from "./pages/Landing";
 import TopBar from "./components/TopBar";
 
-import LandingPage from "./pages/Landing";
 import ProfilePage from "./pages/UserProfile";
-import "./App.css";
 import SignUpPage from "./pages/SignUp";
 import SignInPage from "./pages/SignIn";
+import "./App.css";
 
 function App() {
   const user = {
@@ -30,8 +28,8 @@ function App() {
       <UserContext.Provider value={user}>
         <BrowserRouter>
           <TopBar />
-          <Route path="/" component={LandingPage} />
-          <Route path="/user_profile" component={ProfilePage}/>
+          <Route path="/" component={SignInPage} />
+          <Route path="/user_profile" component={ProfilePage} />
           <Route path="/signin" component={SignInPage} />
           <Route path="/signup" component={SignUpPage} />
         </BrowserRouter>
