@@ -65,9 +65,6 @@ const signInPageStyle = (theme) => ({
   },
 });
 
-function redirect(to) {
-  return <Redirect to={to}/>
-}
 
 const SignInPage = (props) => {
   const { classes } = props;
@@ -103,7 +100,6 @@ const SignInPage = (props) => {
       }
     })
   }
-
   return (
     <Grid container direction="row" className={classes.signInContainer}>
       <Grid item md={6} sm={12}>
@@ -185,7 +181,6 @@ const SignInPage = (props) => {
                 </Button>
               </Link>
             </Typography>
-
           </Grid>
         </Grid>
       </Grid>

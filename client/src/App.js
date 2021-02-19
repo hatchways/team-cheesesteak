@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import { MuiThemeProvider } from "@material-ui/core";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import { theme } from "./themes/theme";
 
@@ -9,6 +9,9 @@ import UserContext from "./context/User"
 import TopBar from "./components/TopBar";
 
 import ProfilePage from "./pages/UserProfile";
+import ChefProfile from "./pages/ChefProfile";
+import SignUpPage from "./pages/SignUp";
+import SignInPage from "./pages/SignIn";
 import "./App.css";
 import SignUpPage from "./pages/SignUp";
 import SignInPage from "./pages/SignIn";

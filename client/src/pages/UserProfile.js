@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   headerLeftContainer: {
     border: '1px solid lightGrey',
     paddingBottom: '3.5em',
-    ['@media (max-width:800px)']: {paddingBottom: '3em'},
+    ['@media (max-width:800px)']: { paddingBottom: '3em' },
   },
   cardHeadAvatar: {
     alignSelf: 'center',
@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
     alignSelf: 'center',
     textAlign: 'center',
     paddingBottom: '2em',
-    ['@media (max-width:1280px)']: {marginTop: '2em'},
+    ['@media (max-width:1280px)']: { marginTop: '2em' },
   },
   bioContainer: {
     alignSelf: 'center',
@@ -113,7 +113,7 @@ const useStyles = makeStyles((theme) => ({
   favoriteCuisine: {
     height: "2em",
     width: "fit-content",
-    ["@media (max-width:800px)"]: {width: "fit-content"},
+    ["@media (max-width:800px)"]: { width: "fit-content" },
     background: theme.main,
     marginRight: "0.75em",
     marginTop: "0.75em",
@@ -173,7 +173,7 @@ export default function ProfilePage(props) {
                   <Typography
                     fontWeight="fontWeightBold"
                     variant="body1"
-                    style={{fontWeight: 600}}
+                    style={{ fontWeight: 600 }}
                   >
                     ABOUT ME:
                   </Typography>
@@ -183,7 +183,7 @@ export default function ProfilePage(props) {
                   <Typography
                     fontWeight="fontWeightBold"
                     variant="body1"
-                    style={{fontWeight: 600}}
+                    style={{ fontWeight: 600 }}
                   >
                     Favorite Cuisines:
                   </Typography>
