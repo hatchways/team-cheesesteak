@@ -72,15 +72,21 @@ const SignInPage = (props) => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [msg, setMsg] = useState("User/Password doesn't exist.");
+  const [msg, setMsg] = useState(null);
+
   const handleSignIn = (e) => {
     fetch('/auth/login').then(response => response.json()).then(data => {
       if (data.status === 200) {
         setUser(data.user);
       } else {
-        return setMsg(msg);
+        return setMsg("User/Password doesn't exist.");
       }
     })
+  }
+  const tempSignIn = (e) => {
+    setUser({ username: 'Meme', type: 'chef' });
+    setMsg('you logged In')
+    console.log(user)
   }
 
   return (
@@ -133,10 +139,7 @@ const SignInPage = (props) => {
                     </Grid>
                     <Grid item>
                       <Button
-                        onClick={(e) => {
-                          setUser({ username: 'Meme', type: 'chef' });
-                          console.log(user)
-                        }}
+                        onClick={(e) => tempSignIn(e)}
                         className={classes.button}>
                         Sign In
                       </Button>
@@ -166,7 +169,7 @@ const SignInPage = (props) => {
                 </Button>
               </Link>
             </Typography>
-            <Typography>{msg}</Typography>
+            {msg && <Typography>{msg}</Typography>}
 
           </Grid>
         </Grid>
