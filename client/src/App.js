@@ -4,6 +4,11 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import { theme } from "./themes/theme";
 
+import UserContext from "./context/User"
+
+import LandingPage from "./pages/Landing";
+import TopBar from "./components/TopBar";
+
 import LandingPage from "./pages/Landing";
 import ProfilePage from "./pages/UserProfile";
 import "./App.css";
@@ -11,17 +16,26 @@ import SignUpPage from "./pages/SignUp";
 import SignInPage from "./pages/SignIn";
 
 function App() {
+  const user = {
+    FName: 'Pierre',
+    LName: 'Smith',
+    Province: 'Ontario',
+    PostalCode: 'M4C 2R2',
+    City: 'Toronto',
+    role: 'Chef',
+  }
+
   return (
     <MuiThemeProvider theme={theme}>
-      <BrowserRouter>
-
-        <Switch>
+      <UserContext.Provider value={user}>
+        <BrowserRouter>
+          <TopBar />
+          <Route path="/" component={LandingPage} />
+          <Route path="/user_profile" component={ProfilePage}/>
           <Route path="/signin" component={SignInPage} />
           <Route path="/signup" component={SignUpPage} />
-        </Switch>
-
-        <Route path="/user_profile" component={ProfilePage}/>
-      </BrowserRouter>
+        </BrowserRouter>
+      </UserContext.Provider>
     </MuiThemeProvider>
   );
 }
