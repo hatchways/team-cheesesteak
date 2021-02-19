@@ -9,8 +9,8 @@ import {
 } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core/styles";
-import chefPic from "../assets/chefPic.png";
-import chefBackground from "../assets/chefBackground.png";
+import chefPic from "../Assets/chefPic.png";
+import chefBackground from "../Assets/chefBackground.png";
 
 const useStyles = makeStyles(theme => ({
   root: {
