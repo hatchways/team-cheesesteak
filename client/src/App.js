@@ -1,41 +1,39 @@
-import React from "react";
-import { MuiThemeProvider } from "@material-ui/core";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import React, {useState, useEffect, useContext} from 'react';
+import {MuiThemeProvider} from '@material-ui/core';
+import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom';
 
-import { theme } from "./themes/theme";
+import {theme} from './themes/theme';
 
-import UserContext from "./context/User";
+import { UserProvider } from './context/User';
 
-import TopBar from "./components/TopBar";
 
-import ProfilePage from "./pages/UserProfile";
-import ChefProfile from "./pages/ChefProfile";
-import SignUpPage from "./pages/SignUp";
-import SignInPage from "./pages/SignIn";
-import "./App.css";
+import ProfilePage from './pages/UserProfile';
+import ChefProfile from './pages/ChefProfile';
+import SignUpPage from './pages/SignUp';
+import SignInPage from './pages/SignIn';
+import PageNotFound from './pages/PageNotFound';
+import './App.css';
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const user = {
-    FName: "Pierre",
-    LName: "Smith",
-    Province: "Ontario",
-    PostalCode: "M4C 2R2",
-    City: "Toronto",
-    role: "Chef",
-  };
-
+  const [user, setUser] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
   return (
     <MuiThemeProvider theme={theme}>
-      <UserContext.Provider value={user}>
+      <UserProvider value={{user, setUser, loggedIn, setLoggedIn}}>
         <BrowserRouter>
-          <TopBar />
-
-          <Route path="/user_profile" component={ProfilePage} />
-          <Route path="/signin" component={SignInPage} />
-          <Route path="/signup" component={SignUpPage} />
-          <Route path="/chef" component={ChefProfile} />
+          <Switch>
+            <ProtectedRoute path="/chef_profile" component={ChefProfile} />
+            <ProtectedRoute path="/user_profile" component={ProfilePage} />
+            <Route path="/signin" component={SignInPage} />
+            <Route path="/signup" component={SignUpPage} />
+            <Route component={PageNotFound} />
+            <Route exact path="/">
+              <Redirect to="/signin" />
+            </Route>
+          </Switch>
         </BrowserRouter>
-      </UserContext.Provider>
+      </UserProvider>
     </MuiThemeProvider>
   );
 }

@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useContext} from 'react';
+
 import {
   Avatar,
   Grid,
@@ -8,6 +9,7 @@ import {
   makeStyles,
   Button,
   Typography,
+
 } from "@material-ui/core";
 import EditProfile from "./EditProfile";
 import profile_pic from "../Assets/woman_profile.png";
@@ -77,6 +79,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "center",
   },
   cardBio: {
+
     flexDirection: "column",
     alignSelf: "center",
     textAlign: "center",
@@ -111,16 +114,16 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   favoriteCuisine: {
-    height: "2em",
-    width: "fit-content",
-    ["@media (max-width:800px)"]: { width: "fit-content" },
+    height: '2em',
+    width: 'fit-content',
+    ['@media (max-width:800px)']: {width: 'fit-content'},
     background: theme.main,
-    marginRight: "0.75em",
-    marginTop: "0.75em",
+    marginRight: '0.75em',
+    marginTop: '0.75em',
   },
   cuisineText: {
-    color: "white",
-    fontStyle: "bold",
+    color: 'white',
+    fontStyle: 'bold',
   },
   // Footer
   mapImage: {
@@ -129,10 +132,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ProfilePage(props) {
+  const {user} = useContext(UserContext);
   const map =
-    "https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png";
-  const bio =
-    "Hi everyone, I'm a foodie, I love food, oh so much, oh so oh so much.";
+    'https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png';
   const classes = useStyles();
   return (
     <Grid container xs={12} className={classes.outerGrid}>
@@ -148,15 +150,15 @@ export default function ProfilePage(props) {
               className={classes.cardHeadLeft}
             >
               <Avatar
-                src={profile_pic}
+                src={user.profile?.profile_image}
                 className={classes.cardHeadAvatar}
                 borderColor="white"
               />
               <Typography variant="h6" className={classes.cardHeadName}>
-                Regina Phelangi
+                {user.profile.name}
               </Typography>
               <Typography className={classes.cardHeadLocation}>
-                Ontario, Canada
+                {user?.profile?.city}, {user?.profile?.country}
               </Typography>
               <Button className={classes.cardSendMessage}>Send Message</Button>
               <EditProfile />
@@ -176,17 +178,19 @@ export default function ProfilePage(props) {
                   <Typography
                     fontWeight="fontWeightBold"
                     variant="body1"
-                    style={{ fontWeight: 600 }}
+                    style={{fontWeight: 600}}
                   >
                     ABOUT ME:
                   </Typography>
-                  <Typography className={classes.biography}>{bio}</Typography>
+                  <Typography className={classes.biography}>
+                    {user?.profile?.about_me}
+                  </Typography>
                 </Typography>
                 <Grid xs={12} sm={12} className={classes.cardFavorites}>
                   <Typography
                     fontWeight="fontWeightBold"
                     variant="body1"
-                    style={{ fontWeight: 600 }}
+                    style={{fontWeight: 600}}
                   >
                     Favorite Cuisines:
                   </Typography>

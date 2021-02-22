@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Button,
   Typography,
@@ -7,10 +7,11 @@ import {
   CardContent,
   Grid,
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, Redirect} from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import BackgroundImg from "../Assets/images/signUpBkg.png";
 import ChefsMenuLogo from "../Assets/images/Logo.png";
+import UserContext from "../context/User";
 
 const regPattern = new RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i);
 
@@ -65,7 +66,10 @@ const signUpPageStyle = (theme) => ({
   },
 });
 
+
 const SignUpPage = (props) => {
+  const [redirect, setRedirect] = useState("");
+  const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext);
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -73,6 +77,31 @@ const SignUpPage = (props) => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [passwordConfirmError, setPasswordConfirmError] = useState("");
+  const [message, setMessage] = useState(null);
+
+
+  const handleSignUp = (e) => {
+    e.preventDefault();
+    const data = {email: email, password: password, name: username};
+    fetch('/auth/signup', {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json"
+      },
+      redirect: "manual",
+      body: JSON.stringify(data)
+    }).then(response => response.json()).then(data => {
+      if (data.status === 201) {
+        setUser(data.user);
+        setLoggedIn(true);
+        // Initially, users are not able to be chefs
+        // so redirect to the regular profile
+        setRedirect(<Redirect to="/user_profile"/>)
+      } else {
+        return setMessage(data.message);
+      }
+    })
+  }
 
   const { classes } = props;
 
@@ -119,6 +148,7 @@ const SignUpPage = (props) => {
   };
   return (
     <Grid container direction="row" className={classes.signUpContainer}>
+      {redirect}
       <Grid item md={6} sm={12}>
         <Grid
           container
@@ -133,7 +163,8 @@ const SignUpPage = (props) => {
                 <Typography className={classes.title} gutterBottom>
                   Create an account
                 </Typography>
-                <form autoComplete="off">
+                {message && <Typography>{message}</Typography>}
+                <form onSubmit={handleSignUp} autoComplete="off">
                   <Grid
                     container
                     direction="column"
