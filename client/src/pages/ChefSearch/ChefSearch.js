@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { Grid, Typography } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
-
+import { Grid, makeStyles, Typography } from "@material-ui/core";
 import ChefSearchCriteria from "./ChefSearchCriteria";
 import SearchResults from "./SearchResults";
+import { theme } from "../../themes/theme";
 
-const chefSearchPageStyle = (theme) => ({
+const useStyles = makeStyles ({
   main: {
     height: "100vh",
     margin: theme.spacing(2),
@@ -20,8 +19,8 @@ const chefSearchPageStyle = (theme) => ({
     padding: theme.spacing(2),
   },
 });
-const ChefSearchPage = (props) => {
-  const { classes } = props;
+const ChefSearchPage = () => {
+  const classes = useStyles();
   //chefDatas is temp static , currently used to show dummy props.chefAvailable profile.
   const chefDatas = [
     {
@@ -114,4 +113,4 @@ const ChefSearchPage = (props) => {
   );
 };
 
-export default withStyles(chefSearchPageStyle)(ChefSearchPage);
+export default ChefSearchPage;

@@ -6,11 +6,11 @@ import {
   TextField,
   Typography,
   Icon,
+  makeStyles,
 } from "@material-ui/core";
+import { theme } from "../../themes/theme";
 
-import { withStyles } from "@material-ui/core/styles";
-
-const chefSearchCriteriaStyle = (theme) => ({
+const useStyles = makeStyles ({
   buttonOrange: {
     background: theme.main,
     color: "white",
@@ -26,7 +26,7 @@ const chefSearchCriteriaStyle = (theme) => ({
   },
 });
 const ChefSearchCriteria = (props) => {
-  const { classes } = props;
+  const classes = useStyles();
   //Array to store cuisines selected for filtering/searching
   const [selectedCuisines, setSelectedCuisines] = useState([]);
   // The location search term is stored in locSearchTerm
@@ -112,4 +112,4 @@ const ChefSearchCriteria = (props) => {
   );
 };
 
-export default withStyles(chefSearchCriteriaStyle)(ChefSearchCriteria);
+export default ChefSearchCriteria;

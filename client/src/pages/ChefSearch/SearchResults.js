@@ -6,10 +6,11 @@ import {
   CardContent,
   CardActionArea,
   Typography,
+  makeStyles,
 } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
+import { theme } from "../../themes/theme";
 
-const searchResultsPageStyle = (theme) => ({
+const useStyles = makeStyles({
   buttonOrange: {
     background: theme.main,
     color: "white",
@@ -27,8 +28,9 @@ const searchResultsPageStyle = (theme) => ({
     borderRadius: "50%",
   },
 });
+
 const SearchResultsPage = (props) => {
-  const { classes } = props;
+  const classes = useStyles();
 
   return (
     <Grid item align="center">
@@ -63,4 +65,4 @@ const SearchResultsPage = (props) => {
   );
 };
 
-export default withStyles(searchResultsPageStyle)(SearchResultsPage);
+export default SearchResultsPage;
