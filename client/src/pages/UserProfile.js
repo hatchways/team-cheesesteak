@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Avatar,
   Grid,
@@ -8,104 +8,105 @@ import {
   makeStyles,
   Button,
   Typography,
-} from '@material-ui/core';
-import profile_pic from '../Assets/woman_profile.png';
+} from "@material-ui/core";
+import EditProfile from "./EditProfile";
+import profile_pic from "../Assets/woman_profile.png";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
   },
   outerGrid: {
-    justifyContent: 'center',
-    background: '#F8F8FF',
+    justifyContent: "center",
+    background: "#F8F8FF",
   },
   innerGrid: {
     boxShadow: theme.shadows[5],
-    background: '#F8F8FF',
+    background: "#F8F8FF",
   },
   // Header
   cardHeader: {
-    background: 'white',
-    width: '100%',
-    direction: 'row',
-    alignSelf: 'center',
+    background: "white",
+    width: "100%",
+    direction: "row",
+    alignSelf: "center",
   },
   // Left header
   cardHeadLeft: {
-    marginTop: '10%',
+    marginTop: "10%",
   },
   headerLeftContainer: {
-    border: '1px solid lightGrey',
-    paddingBottom: '3.5em',
-    ['@media (max-width:800px)']: { paddingBottom: '3em' },
+    border: "1px solid lightGrey",
+    paddingBottom: "3.5em",
+    ["@media (max-width:800px)"]: { paddingBottom: "3em" },
   },
   cardHeadAvatar: {
-    alignSelf: 'center',
-    border: '3px solid white',
+    alignSelf: "center",
+    border: "3px solid white",
     boxShadow: theme.shadows[5],
-    marginBottom: '1em',
-    width: '6em',
-    height: '6em',
+    marginBottom: "1em",
+    width: "6em",
+    height: "6em",
   },
   cardHeadLocation: {
-    paddingBottom: '1.5em',
-    color: 'grey',
+    paddingBottom: "1.5em",
+    color: "grey",
   },
   cardSendMessage: {
-    border: '2px solid #FF510C',
+    border: "2px solid #FF510C",
     color: theme.light,
-    borderRadius: '0',
-    paddingTop: '1em',
-    paddingBottom: '1em',
-    paddingLeft: '2.5em',
-    paddingRight: '2.5em',
-    alignSelf: 'center',
+    borderRadius: "0",
+    paddingTop: "1em",
+    paddingBottom: "1em",
+    paddingLeft: "2.5em",
+    paddingRight: "2.5em",
+    alignSelf: "center",
   },
 
   // Right header
   cardHeadRight: {
-    height: '100%',
-    justifyContent: 'center',
+    height: "100%",
+    justifyContent: "center",
   },
   headRightContainer: {
-    textAlign: 'center',
-    flexWrap: 'wrap',
+    textAlign: "center",
+    flexWrap: "wrap",
   },
   bioContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
   },
   cardBio: {
-    flexDirection: 'column',
-    alignSelf: 'center',
-    textAlign: 'center',
-    paddingBottom: '2em',
-    ['@media (max-width:1280px)']: { marginTop: '2em' },
+    flexDirection: "column",
+    alignSelf: "center",
+    textAlign: "center",
+    paddingBottom: "2em",
+    ["@media (max-width:1280px)"]: { marginTop: "2em" },
   },
   bioContainer: {
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   bioHead: {
-    color: 'grey',
-    paddingBottom: '1em',
+    color: "grey",
+    paddingBottom: "1em",
   },
   biography: {
-    color: 'grey',
-    marginBottom: '0.75em',
+    color: "grey",
+    marginBottom: "0.75em",
   },
   cardFavorites: {
-    alignSelf: 'center',
-    textAlign: 'center',
-    flexDirection: 'column',
+    alignSelf: "center",
+    textAlign: "center",
+    flexDirection: "column",
   },
   favoritesList: {
-    display: 'flex',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    ['@media (max-width:1280px)']: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "row",
+    ["@media (max-width:1280px)"]: {
       alignItems: "center",
-      flexDirection: 'column',
-      marginBottom: '2em',
+      flexDirection: "column",
+      marginBottom: "2em",
     },
     padding: 0,
   },
@@ -123,13 +124,13 @@ const useStyles = makeStyles((theme) => ({
   },
   // Footer
   mapImage: {
-    width: '100%',
+    width: "100%",
   },
 }));
 
 export default function ProfilePage(props) {
   const map =
-    'https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png';
+    "https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png";
   const bio =
     "Hi everyone, I'm a foodie, I love food, oh so much, oh so oh so much.";
   const classes = useStyles();
@@ -158,6 +159,7 @@ export default function ProfilePage(props) {
                 Ontario, Canada
               </Typography>
               <Button className={classes.cardSendMessage}>Send Message</Button>
+              <EditProfile />
             </Grid>
           </Grid>
 

@@ -29,7 +29,7 @@ function App() {
       <UserContext.Provider value={user}>
         <BrowserRouter>
           <TopBar />
-          <Route path="/" component={SignInPage} />
+
           <Route path="/user_profile" component={ProfilePage} />
           <Route path="/signin" component={SignInPage} />
           <Route path="/signup" component={SignUpPage} />
