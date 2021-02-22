@@ -19,8 +19,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import { Link } from "react-router-dom";
 
-import UserContext from '../context/User'
-
+import UserContext, {logOut} from '../context/User'
 const useStyles = makeStyles((theme) => ({
 	root: {
 		flexGrow: 1,
@@ -82,7 +81,6 @@ function TopBar(props) {
 		setTop({ ...top, 'top': open });
 	};
 
-
 	const list = () => (
 		<Grid
 			className='top'
@@ -139,7 +137,7 @@ function TopBar(props) {
 							onClose={handleClose}
 						>
 							<MenuItem onClick={handleClose}><Link to='/profile' className={classes.AppBarLink}>Profile</Link></MenuItem>
-							<MenuItem>Logout</MenuItem>
+							<MenuItem onClick={logOut}><Link to="/signin">Logout</Link></MenuItem>
 						</Menu>
 					</Grid>
 				</Toolbar>

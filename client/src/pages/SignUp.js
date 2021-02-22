@@ -7,7 +7,7 @@ import {
   CardContent,
   Grid,
 } from "@material-ui/core";
-import { Link, useHistory } from "react-router-dom";
+import { Link, Redirect} from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import BackgroundImg from "../Assets/images/signUpBkg.png";
 import ChefsMenuLogo from "../Assets/images/Logo.png";
@@ -68,7 +68,7 @@ const signUpPageStyle = (theme) => ({
 
 
 const SignUpPage = (props) => {
-  const history = useHistory();
+  const [redirect, setRedirect] = useState("");
   const {user, setUser} = useContext(UserContext);
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
@@ -94,13 +94,9 @@ const SignUpPage = (props) => {
       if (data.status === 201) {
         console.log(user.profile);
         setUser(data.user);
-        console.log(data.user.profile);
-        if (data.user.profile.is_chef){
-          history.push('/chef_profile')
-
-        }else{
-        history.push('/user_profile')
-        }
+        // Initially, users are not able to be chefs
+        // so redirect to the regular profile
+        setRedirect(<Redirect to="/user_profile"/>)
       } else {
         return setMessage(data.message);
       }
@@ -152,6 +148,7 @@ const SignUpPage = (props) => {
   };
   return (
     <Grid container direction="row" className={classes.signUpContainer}>
+      {redirect}
       <Grid item md={6} sm={12}>
         <Grid
           container

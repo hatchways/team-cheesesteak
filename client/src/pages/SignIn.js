@@ -12,6 +12,7 @@ import { withStyles } from "@material-ui/core/styles";
 import BackgroundImg from "../Assets/images/signUpBkg.png";
 import ChefsMenuLogo from "../Assets/images/Logo.png";
 import UserContext from "../context/User";
+import ProfilePage from "../pages/UserProfile"
 
 const signInPageStyle = (theme) => ({
   signInContainer: {
@@ -68,12 +69,13 @@ const signInPageStyle = (theme) => ({
 
 const SignInPage = (props) => {
   const { classes } = props;
-  let history = useHistory();
   const { user, setUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(null);
+  const [redirect, setRedirect] = useState('');
 
+    
   const handleSignIn = (e) => {
     e.preventDefault();
     const data = {email: email, password: password};
@@ -86,17 +88,15 @@ const SignInPage = (props) => {
       body: JSON.stringify(data)
     }).then(response => response.json()).then(data => {
       if (data.status === 200) {
-        console.log(user);
         setUser(data.user);
-        console.log(data.user.profile);
-        if (data.user.profile.is_chef){
-          history.push('/chef_profile')
-
-        }else{
-        history.push('/user_profile')
+        console.log(user);
+        if (data.user.profile.is_chef === "true"){
+          setRedirect(<Redirect to="/chef_profile"/>);
+        } else {
+          setRedirect(<Redirect to="/user_profile" />);
         }
       } else {
-        return setMessage(data.message);
+      setMessage(data.message);
       }
     })
   }

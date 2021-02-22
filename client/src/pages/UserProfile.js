@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
   Avatar,
   Grid,
@@ -10,8 +10,8 @@ import {
   Typography,
 } from '@material-ui/core';
 import profile_pic from '../Assets/woman_profile.png';
-import UserContext, { handleData } from "../context/User";
-
+import UserContext from '../context/User';
+import {Redirect} from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   headerLeftContainer: {
     border: '1px solid lightGrey',
     paddingBottom: '3.5em',
-    ['@media (max-width:800px)']: { paddingBottom: '3em' },
+    ['@media (max-width:800px)']: {paddingBottom: '3em'},
   },
   cardHeadAvatar: {
     alignSelf: 'center',
@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
     alignSelf: 'center',
     textAlign: 'center',
     paddingBottom: '2em',
-    ['@media (max-width:1280px)']: { marginTop: '2em' },
+    ['@media (max-width:1280px)']: {marginTop: '2em'},
   },
   bioContainer: {
     alignSelf: 'center',
@@ -104,23 +104,23 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     flexDirection: 'row',
     ['@media (max-width:1280px)']: {
-      alignItems: "center",
+      alignItems: 'center',
       flexDirection: 'column',
       marginBottom: '2em',
     },
     padding: 0,
   },
   favoriteCuisine: {
-    height: "2em",
-    width: "fit-content",
-    ["@media (max-width:800px)"]: { width: "fit-content" },
+    height: '2em',
+    width: 'fit-content',
+    ['@media (max-width:800px)']: {width: 'fit-content'},
     background: theme.main,
-    marginRight: "0.75em",
-    marginTop: "0.75em",
+    marginRight: '0.75em',
+    marginTop: '0.75em',
   },
   cuisineText: {
-    color: "white",
-    fontStyle: "bold",
+    color: 'white',
+    fontStyle: 'bold',
   },
   // Footer
   mapImage: {
@@ -130,8 +130,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ProfilePage(props) {
   const {user, setUser} = useContext(UserContext);
-  const map ='https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png';
+  const map =
+    'https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png';
   const classes = useStyles();
+  // This won't be needed once I figure out how to redirect
+  // from the Provider
+  if(user === "redirect"){
+    return <Redirect to="/signin"/>
+  }
   return (
     <Grid container xs={12} className={classes.outerGrid}>
       <Grid container xs={12} sm={12} md={8} className={classes.innerGrid}>
@@ -146,7 +152,7 @@ export default function ProfilePage(props) {
               className={classes.cardHeadLeft}
             >
               <Avatar
-                src={user.profile.profile_image}
+                src={user.profile?.profile_image}
                 className={classes.cardHeadAvatar}
                 borderColor="white"
               />
@@ -154,7 +160,7 @@ export default function ProfilePage(props) {
                 {user.profile.name}
               </Typography>
               <Typography className={classes.cardHeadLocation}>
-                {user.profile.city}, {user.profile.country}
+                {user?.profile?.city}, {user?.profile?.country}
               </Typography>
               <Button className={classes.cardSendMessage}>Send Message</Button>
             </Grid>
@@ -173,17 +179,19 @@ export default function ProfilePage(props) {
                   <Typography
                     fontWeight="fontWeightBold"
                     variant="body1"
-                    style={{ fontWeight: 600 }}
+                    style={{fontWeight: 600}}
                   >
                     ABOUT ME:
                   </Typography>
-                  <Typography className={classes.biography}>{user.profile.about_me}</Typography>
+                  <Typography className={classes.biography}>
+                    {user?.profile?.about_me}
+                  </Typography>
                 </Typography>
                 <Grid xs={12} sm={12} className={classes.cardFavorites}>
                   <Typography
                     fontWeight="fontWeightBold"
                     variant="body1"
-                    style={{ fontWeight: 600 }}
+                    style={{fontWeight: 600}}
                   >
                     Favorite Cuisines:
                   </Typography>

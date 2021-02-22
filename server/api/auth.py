@@ -93,6 +93,7 @@ def signup():
             response_dict['user'] = user_info
             response_dict['user']['profile'] = profile.to_dict(excludes=['user_id', 'recipes', 'user'])
             response = make_response(response_dict)
+            response.set_cookie("user_id", str(user.id))
             # Set JWT cookies
             set_access_cookies(response, access_token)
             set_refresh_cookies(response, refresh_token)
@@ -103,6 +104,22 @@ def signup():
             response_dict['message'] = "%s" % (e)
             # Validation problem
             return jsonify(response_dict), 401
+
+@auth_views.route("/get_user_info", methods=["GET"])
+def get_user_info():
+    """
+    Get a user by the ID stored in the cookie
+    then return a dictionary of information
+    """
+    response_dict = {}
+    user_id = request.cookies.get('user_id', None)
+    if user_id != None:
+        user = User.get_instance(**{'id': int(user_id)})
+        response_dict['user'] = user.to_dict(excludes=['profile', 'password_hash'])
+        response_dict['user']['profile'] = user.profile.to_dict(excludes=["recipes", "user", 'user_id'])
+        return jsonify(response_dict), 200
+    response_dict['redirect'] = True
+    return jsonify(response_dict), 200
 
 @auth_views.route('/login', methods=['POST'])
 def login():
@@ -116,7 +133,7 @@ def login():
             # User was found but password failed to match
             if not user:
                 response_dict['status'] = 401
-                response_dict['message'] = "Incorrect Password"
+                response_dict['message'] = "Incorrect Email or Password"
                 return jsonify(response_dict), 401
             # Credentials are correct, continue
             # Clear the session for fresh data
@@ -133,19 +150,15 @@ def login():
             response_dict['status'] = 200
             response_dict['message'] = "Successfully Logged in"
             response = make_response(response_dict)
+            response.set_cookie("user_id", str(user.id))
             # Set JWT cookies
             set_access_cookies(response, access_token)
             return response, 200
         except NoResultFound as e:
             response_dict['status'] = 401
-            response_dict['message'] = "Incorrect Email"
+            response_dict['message'] = "Incorrect Email or Password"
             # User with the passed email was not found
             return jsonify(response_dict), 401
-        except Exception as e:
-            response_dict['status'] = 400
-            response_dict['message'] = "An unknown error occured ERROR: %s" % (e)
-            # In case something happens with user.to_dict()
-            return jsonify(response_dict), 400
 
 @auth_views.route('/logout')
 def logout():
@@ -154,6 +167,7 @@ def logout():
     response_dict['status'] = 200
     response_dict['message'] = "Successfully logged out"
     response = jsonify(response_dict)
+    response.set_cookie("user_id", "", expires=0)
     # Remove cookies and clear the session
     unset_jwt_cookies(response)
     session.clear()
