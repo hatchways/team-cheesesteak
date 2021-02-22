@@ -22,10 +22,6 @@ function App() {
     <MuiThemeProvider theme={theme}>
       <UserProvider value={{user, setUser, loggedIn, setLoggedIn}}>
         <BrowserRouter>
-        {/* 
-            TopBar was moved to ProtectedRoute since the initial
-            state of the loggedIn is false
-        */}
           <Switch>
             <ProtectedRoute path="/chef_profile" component={ChefProfile} />
             <ProtectedRoute path="/user_profile" component={ProfilePage} />
