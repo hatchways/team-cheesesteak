@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import {
   Avatar,
   Grid,
@@ -9,9 +9,7 @@ import {
   Button,
   Typography,
 } from '@material-ui/core';
-import profile_pic from '../Assets/woman_profile.png';
 import UserContext from '../context/User';
-import {Redirect} from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -129,15 +127,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function ProfilePage(props) {
-  const {user, setUser} = useContext(UserContext);
+  const {user} = useContext(UserContext);
   const map =
     'https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png';
   const classes = useStyles();
-  // This won't be needed once I figure out how to redirect
-  // from the Provider
-  if(user === "redirect"){
-    return <Redirect to="/signin"/>
-  }
   return (
     <Grid container xs={12} className={classes.outerGrid}>
       <Grid container xs={12} sm={12} md={8} className={classes.innerGrid}>

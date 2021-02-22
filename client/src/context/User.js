@@ -1,50 +1,35 @@
-import React, {useState, useEffect, Children} from 'react';
-import {Redirect, Route, BrowserRouter} from 'react-router-dom';
-import SignInPage from '../pages/SignIn';
-export const getUserData = async () => {
-  const response = await fetch('/auth/get_user_info');
-  const data = await response.json();
-  if (data.redirect !== true) {
-    return data.user;
-  } else {
-    return 'redirect';
-  }
-};
-
-export const logOut = async () => {
-  const response = await fetch('/auth/logout');
-  const data = await response.json();
-  return data.message;
-};
-
+import React, {useState, useEffect} from 'react';
 
 export const UserProvider = ({children}) => {
   const [user, setUser] = useState('');
-  const [redirect, setRedirect] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
     async function getUserData() {
       const response = await fetch('/auth/get_user_info');
       const data = await response.json();
       if (data.redirect !== true) {
+        setLoggedIn(true);
         setUser(data.user);
-      } else {
-        setUser('redirect');
+      }else{
+        setUser("redirect");
       }
     }
-    getUserData();
+    // Only fetch if user is empty
+    if (user === ""){
+      getUserData();
+    }
   }, []);
   const {Provider} = UserContext;
-  if (user === '') {
-    return <span>Loading...</span>;
-  }if (user == "redirect"){
-    //Redirect the user somehow
-    return null
+  // Give getUserData time to populate the user variable
+  if(user === ""){
+    return <span>Loading...</span>
   }
-  else {
-    console.log('User is provided');
-    return <Provider value={{user}}>{children}</Provider>;
-  }
+  return (
+    <Provider value={{user, setUser, loggedIn, setLoggedIn}}>
+      {children}
+    </Provider>
+  )
 };
 
 const UserContext = React.createContext();

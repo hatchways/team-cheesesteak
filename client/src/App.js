@@ -4,9 +4,8 @@ import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom';
 
 import {theme} from './themes/theme';
 
-import UserContext, { UserProvider } from './context/User';
+import { UserProvider } from './context/User';
 
-import TopBar from './components/TopBar';
 
 import ProfilePage from './pages/UserProfile';
 import ChefProfile from './pages/ChefProfile';
@@ -14,22 +13,22 @@ import SignUpPage from './pages/SignUp';
 import SignInPage from './pages/SignIn';
 import PageNotFound from './pages/PageNotFound';
 import './App.css';
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const [user, setUser] = useState("");
-  const [redirect] = useState("");
-  // Debug
-  //const {user, setUser} = useContext(UserContext);
-
+  const [loggedIn, setLoggedIn] = useState(false);
   return (
     <MuiThemeProvider theme={theme}>
-      <UserProvider value={{user, setUser}}>
+      <UserProvider value={{user, setUser, loggedIn, setLoggedIn}}>
         <BrowserRouter>
-          {user && <TopBar />}
-          {redirect && <Redirect to="/signin" />}
+        {/* 
+            TopBar was moved to ProtectedRoute since the initial
+            state of the loggedIn is false
+        */}
           <Switch>
-            <Route path="/chef_profile" component={ChefProfile} />
-            <Route path="/user_profile" component={ProfilePage} />
+            <ProtectedRoute path="/chef_profile" component={ChefProfile} />
+            <ProtectedRoute path="/user_profile" component={ProfilePage} />
             <Route path="/signin" component={SignInPage} />
             <Route path="/signup" component={SignUpPage} />
             <Route component={PageNotFound} />

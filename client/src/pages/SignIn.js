@@ -7,13 +7,11 @@ import {
   CardContent,
   Grid,
 } from "@material-ui/core";
-import { Link, Route, Redirect, useHistory } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import BackgroundImg from "../Assets/images/signUpBkg.png";
 import ChefsMenuLogo from "../Assets/images/Logo.png";
 import UserContext from "../context/User";
-import ProfilePage from "../pages/UserProfile"
-
 const signInPageStyle = (theme) => ({
   signInContainer: {
     fontFamily: '"Roboto"',
@@ -69,13 +67,12 @@ const signInPageStyle = (theme) => ({
 
 const SignInPage = (props) => {
   const { classes } = props;
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser, loggedIn, setLoggedIn } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(null);
   const [redirect, setRedirect] = useState('');
 
-    
   const handleSignIn = (e) => {
     e.preventDefault();
     const data = {email: email, password: password};
@@ -89,9 +86,9 @@ const SignInPage = (props) => {
     }).then(response => response.json()).then(data => {
       if (data.status === 200) {
         setUser(data.user);
-        console.log(user);
+        setLoggedIn(true);
         if (data.user.profile.is_chef === "true"){
-          setRedirect(<Redirect to="/chef_profile"/>);
+          setRedirect(<Redirect to="/chef_profile" />);
         } else {
           setRedirect(<Redirect to="/user_profile" />);
         }
@@ -103,6 +100,7 @@ const SignInPage = (props) => {
   return (
     <Grid container direction="row" className={classes.signInContainer}>
       <Grid item md={6} sm={12}>
+        {redirect}
         <Grid
           container
           direction="column"

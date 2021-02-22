@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
 function TopBar(props) {
 
 	const classes = useStyles();
-	const user = useContext(UserContext)
+	const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext)
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 
@@ -137,7 +137,12 @@ function TopBar(props) {
 							onClose={handleClose}
 						>
 							<MenuItem onClick={handleClose}><Link to='/profile' className={classes.AppBarLink}>Profile</Link></MenuItem>
-							<MenuItem onClick={logOut}><Link to="/signin">Logout</Link></MenuItem>
+							<MenuItem onClick={() => {
+								fetch("/auth/logout");
+								setUser(null);
+								setLoggedIn(false);
+							}
+							}><Link to="/signin">Logout</Link></MenuItem>
 						</Menu>
 					</Grid>
 				</Toolbar>

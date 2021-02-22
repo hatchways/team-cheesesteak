@@ -69,7 +69,7 @@ const signUpPageStyle = (theme) => ({
 
 const SignUpPage = (props) => {
   const [redirect, setRedirect] = useState("");
-  const {user, setUser} = useContext(UserContext);
+  const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext);
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -92,8 +92,8 @@ const SignUpPage = (props) => {
       body: JSON.stringify(data)
     }).then(response => response.json()).then(data => {
       if (data.status === 201) {
-        console.log(user.profile);
         setUser(data.user);
+        setLoggedIn(true);
         // Initially, users are not able to be chefs
         // so redirect to the regular profile
         setRedirect(<Redirect to="/user_profile"/>)
