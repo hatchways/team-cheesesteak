@@ -1,11 +1,12 @@
 # Seeding Your Database with seed_database()
 ### Running The Script
-To run the script, navigate to the server directory then open a python shell with ```pipenv run python```. If you do not have any tables in your database/have not ran ```Base.metadata.create_all(engine)``` you must follow steps 1-3, otherwise start from step 4
+To run the script, navigate to the server directory then open a python shell with ```pipenv run python```. If you do not have any tables in your database/have not ran ```Base.metadata.create_all(engine)``` you must follow steps 1-4, otherwise start from step 5
 1. Import the declarative base with ```from models.base_model import Base``` (see below for more information about why it MUST be imported from models.base_model)
-2. Import the engine ```from db import engine```
-3. Create your tables ```Base.metadata.create_all(engine)```
-4. Import the script ```from seed import seed_database```
-5. Run the script ```seed_database()``` 
+2. Import all the models so they get added to the metadata in the declarative base with ```from models import user, profile, recipe```
+3. Import the engine ```from db import engine```
+4. Create your tables ```Base.metadata.create_all(engine)```
+5. Import the script ```from seed import seed_database```
+6. Run the script ```seed_database()``` 
 This will create 3 users, 3 profiles and 3 recipes. Each user will have one profile in the profile field and each profile will have one recipe in the recipes field.
 
 ### Import Base ONLY from models.base_model
