@@ -1,4 +1,5 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
+import UserContext from '../context/User'
 
 import {
   Avatar,
@@ -116,7 +117,7 @@ const useStyles = makeStyles(theme => ({
   favoriteCuisine: {
     height: '2em',
     width: 'fit-content',
-    ['@media (max-width:800px)']: {width: 'fit-content'},
+    ['@media (max-width:800px)']: { width: 'fit-content' },
     background: theme.main,
     marginRight: '0.75em',
     marginTop: '0.75em',
@@ -132,7 +133,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ProfilePage(props) {
-  const {user} = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const map =
     'https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png';
   const classes = useStyles();
@@ -178,7 +179,7 @@ export default function ProfilePage(props) {
                   <Typography
                     fontWeight="fontWeightBold"
                     variant="body1"
-                    style={{fontWeight: 600}}
+                    style={{ fontWeight: 600 }}
                   >
                     ABOUT ME:
                   </Typography>
@@ -190,7 +191,7 @@ export default function ProfilePage(props) {
                   <Typography
                     fontWeight="fontWeightBold"
                     variant="body1"
-                    style={{fontWeight: 600}}
+                    style={{ fontWeight: 600 }}
                   >
                     Favorite Cuisines:
                   </Typography>
