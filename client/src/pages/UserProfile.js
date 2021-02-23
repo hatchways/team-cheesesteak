@@ -1,6 +1,4 @@
 import React, { useContext } from 'react';
-import UserContext from '../context/User'
-
 import {
   Avatar,
   Grid,
@@ -15,6 +13,7 @@ import {
 import EditProfile from "./EditProfile";
 import profile_pic from "../Assets/woman_profile.png";
 import UserContext from "../context/User";
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
