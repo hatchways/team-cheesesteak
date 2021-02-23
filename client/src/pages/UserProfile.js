@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 import EditProfile from "./EditProfile";
 import profile_pic from "../Assets/woman_profile.png";
-
+import UserContext from "../context/User";
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -136,6 +136,7 @@ export default function ProfilePage(props) {
   const map =
     'https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png';
   const classes = useStyles();
+
   return (
     <Grid container xs={12} className={classes.outerGrid}>
       <Grid container xs={12} sm={12} md={8} className={classes.innerGrid}>
@@ -150,7 +151,7 @@ export default function ProfilePage(props) {
               className={classes.cardHeadLeft}
             >
               <Avatar
-                src={user.profile?.profile_image}
+                src={user.profile.profile_image}
                 className={classes.cardHeadAvatar}
                 borderColor="white"
               />
@@ -158,7 +159,7 @@ export default function ProfilePage(props) {
                 {user.profile.name}
               </Typography>
               <Typography className={classes.cardHeadLocation}>
-                {user?.profile?.city}, {user?.profile?.country}
+                {user.profile.location}
               </Typography>
               <Button className={classes.cardSendMessage}>Send Message</Button>
               <EditProfile />
@@ -183,7 +184,7 @@ export default function ProfilePage(props) {
                     ABOUT ME:
                   </Typography>
                   <Typography className={classes.biography}>
-                    {user?.profile?.about_me}
+                    {user.profile.about_me}
                   </Typography>
                 </Typography>
                 <Grid xs={12} sm={12} className={classes.cardFavorites}>

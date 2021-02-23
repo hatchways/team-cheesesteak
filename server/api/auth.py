@@ -22,13 +22,17 @@ def authenticate(view):
     @functools.wraps(view)
     def decorated_function(*args, **kwargs):
         response_dict = {}
-        # First look for a user object
-        if g.user is None:
+        # Find out if there's a user_id cookie
+        user_id = request.cookies.get('user_id', None)
+        if user_id is None:
             response_dict['status'] = 401
             response_dict['message'] = "You have to be logged in for that"
             return jsonify(response_dict), 401
         # Then validate the token
         try:
+            # Try and add the user to the kwargs
+            user = User.get_instance(**{'id': int(user_id)})
+            kwargs['user'] = user
             # This will raise an error if the token
             # is not valid is some way
             verify_jwt_in_request()
@@ -38,14 +42,6 @@ def authenticate(view):
             return jsonify(response_dict), 401
         return view(*args, **kwargs)
     return decorated_function
-
-@auth_views.before_app_request
-def load_logged_in_user():
-    user_id = session.get("user_id", None)
-    if user_id is not None:
-        g.user = User.get_instance(**{'id': user_id})
-    else:
-        g.user = None
 
 @auth_views.route("/signup", methods=["POST"])
 def signup():
