@@ -58,3 +58,28 @@ def search_cuisines():
     # All good, make the response and return
     response = jsonify(response_dict)
     return response, 200
+
+@search_views.route("/location", methods=["GET"])
+@authenticate
+def chefs_by_location(**kwargs):
+    """
+    Use the user object from kwargs to get the center point
+    of the radius then use sqlalchemy/haversine formula
+    to find all chefs within the given radius
+    """
+    user = kwargs['user']
+    response_dict = {}
+    # I have no idea how to do this
+    distance = request.args.get('distance')
+    chefs = session.query(User).filter(
+        (func.degrees(
+            func.acos(
+                func.sin(func.radians(user.latitude)) * func.sin(func.radians(User.latitude))
+                + func.cos(func.radians(user.latitude)) * func.cos(func.radians(User.latitude))
+                * func.cos(func.radians(user.longitude-User.longitude))
+            )
+        ) * 60 * 1.1515 * 1.609344) <= distance).all()
+    if len(chefs) == 0:
+        response_dict['status'] = 204
+        response_dict['message'] = "No chefs were found"
+        return jsonify(response_dict), 204
