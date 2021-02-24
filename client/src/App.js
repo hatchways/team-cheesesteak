@@ -9,9 +9,11 @@ import UserContext from "./context/User";
 import TopBar from "./components/TopBar";
 
 import ProfilePage from "./pages/UserProfile";
-import ChefProfile from "./pages/ChefProfile";
+import ChefProfilePage from "./pages/ChefProfile";
 import SignUpPage from "./pages/SignUp";
 import SignInPage from "./pages/SignIn";
+import UploadPage from "./pages/Upload";
+import PageNotFound from "./pages/PageNotFound";
 import "./App.css";
 
 function App() {
@@ -29,11 +31,15 @@ function App() {
       <UserContext.Provider value={user}>
         <BrowserRouter>
           <TopBar />
-          <Route path="/" component={SignInPage} />
-          <Route path="/user_profile" component={ProfilePage} />
-          <Route path="/signin" component={SignInPage} />
-          <Route path="/signup" component={SignUpPage} />
-          <Route path="/chef" component={ChefProfile} />
+          <Switch>
+            <Route exact path="/" component={SignInPage} />
+            <Route path="/user_profile" component={ProfilePage} />
+            <Route path="/signin" component={SignInPage} />
+            <Route path="/signup" component={SignUpPage} />
+            <Route path="/chef" component={ChefProfilePage} />
+            <Route path="/upload" component={UploadPage} />
+            <Route component={PageNotFound} />
+          </Switch>
         </BrowserRouter>
       </UserContext.Provider>
     </MuiThemeProvider>

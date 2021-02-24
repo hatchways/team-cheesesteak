@@ -138,7 +138,7 @@ class BaseModelMixin(object):
         instance = session.query(cls).get(id)
         for field, value in info.items():
             if hasattr(instance, field):
-                setattr(instance, key, value)
+                setattr(instance, field, value)
             else:
                 raise AttributeError(f"Could not update {cls} instance because {cls} does not have a {field} field")
         session.commit()
