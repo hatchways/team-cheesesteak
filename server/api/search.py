@@ -1,8 +1,10 @@
 
 import json
 from flask import make_response, request, Blueprint, jsonify
+from sqlalchemy.sql.functions import func
 from models.recipe import Recipe
 from models.profile import Profile
+from models.user import User
 from .auth import authenticate
 from db import session
 search_views = Blueprint('search', __name__, url_prefix="/search")
@@ -67,19 +69,36 @@ def chefs_by_location(**kwargs):
     of the radius then use sqlalchemy/haversine formula
     to find all chefs within the given radius
     """
-    user = kwargs['user']
     response_dict = {}
-    # I have no idea how to do this
-    distance = request.args.get('distance')
-    chefs = session.query(User).filter(
+    user = kwargs['user']
+    request_dict = request.get_json()
+    distance = request_dict['distance']
+    chefs = session.query(User).join(User.profile).filter(
         (func.degrees(
             func.acos(
                 func.sin(func.radians(user.latitude)) * func.sin(func.radians(User.latitude))
                 + func.cos(func.radians(user.latitude)) * func.cos(func.radians(User.latitude))
                 * func.cos(func.radians(user.longitude-User.longitude))
             )
-        ) * 60 * 1.1515 * 1.609344) <= distance).all()
+        ) * 60 * 1.1515 * 1.609344) <= distance).filter(Profile.is_chef == True).filter(User.id!=user.id).all()
     if len(chefs) == 0:
         response_dict['status'] = 204
         response_dict['message'] = "No chefs were found"
         return jsonify(response_dict), 204
+    
+    # Build the response dictionary
+    response_dict['chefs'] = []
+    for chef in chefs:
+        chef_dict = chef.to_dict(excludes=[
+                'notifications',
+                'profile',
+                'password_hash',
+                'latitude',
+                'longitude'        
+            ])
+        chef_dict['profile'] = chef.profile.to_dict(
+            excludes=["recipes", "user", 'user_id']
+        )
+        response_dict['chefs'].append(chef_dict)
+    response_dict['status'] = 200
+    return jsonify(response_dict), 200

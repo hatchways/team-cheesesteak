@@ -1,9 +1,10 @@
 import re
+import os
 from sqlalchemy import (
     Column, String,
     Integer, ForeignKey,
     Text, Boolean,
-    Decimal
+    Float
     )
 from sqlalchemy.orm import relationship, validates, backref
 from sqlalchemy.ext.declarative import declarative_base
@@ -18,7 +19,6 @@ from models.profile import Profile
 from config import API_KEY
 from handlers.GoogleAPIHandler import GoogleAPIHandler
 import requests
-
 class User(Base, BaseModelMixin):
     __tablename__ = "user"
     
@@ -67,7 +67,6 @@ class User(Base, BaseModelMixin):
         google_req = requests.get(url).json()
         googleHandler = GoogleAPIHandler(google_req)
         status = googleHandler.handle()
-
         if status != 'OK':
             raise Exception(status['msg'])
         

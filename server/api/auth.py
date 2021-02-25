@@ -1,4 +1,3 @@
-
 import functools
 import json
 from sqlalchemy.orm.exc import NoResultFound
@@ -59,7 +58,7 @@ def signup():
                 continue
             if request_dict.get(field, None) != None:
                 user_info[field] = request_dict[field]
-        # Create a full length address
+        # Create a full length address to get the geocode
         address_info = [
             user_info['street_address'],
             user_info['city'],
