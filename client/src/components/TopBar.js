@@ -20,6 +20,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { Link } from "react-router-dom";
 
 import UserContext, {logOut} from '../context/User'
+import Logo from '../Assets/images/Logo.png'
+
 const useStyles = makeStyles((theme) => ({
 	root: {
 		flexGrow: 1,
@@ -104,14 +106,15 @@ function TopBar(props) {
 		<Grid className={classes.root}>
 			<AppBar position="static" className={classes.AppBar}>
 				<Toolbar>
-
-					<Typography variant="h5" className={classes.title}>
-						<Link to='/' className={classes.AppBarLink}>CHEF'S MENU</Link>
-					</Typography>
-					<IconButton edge="start" onClick={toggleDrawer(true)} className={classes.menuButton} color="inherit" aria-label="menu">
-						<DragHandleIcon />
-					</IconButton>
+					<Grid className={classes.title}>
+						<Link to='/' className={classes.AppBarLink}>
+							<img src={Logo} alt='logo home link'/>
+						</Link>
+					</Grid>
 					<Grid>
+						<IconButton edge="start" onClick={toggleDrawer(true)} className={classes.menuButton} color="inherit" aria-label="menu">
+							<DragHandleIcon />
+						</IconButton>
 						<IconButton
 							aria-label="account of current user"
 							aria-controls="menu-appbar"
