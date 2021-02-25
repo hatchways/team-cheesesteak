@@ -34,6 +34,7 @@ class User(Base, BaseModelMixin):
     password_hash = Column(String(128), nullable=False)
 
     # Relationships
+    notifications = relationship("Notification", backref="user", cascade="all, delete-orphan")
     # This requires the Profile model to link back to the user model
     profile = relationship("Profile", uselist=False, backref="user", cascade="all, delete-orphan")
 

@@ -27,11 +27,10 @@ class Notification(Base, BaseModelMixin):
     notifications differently or handle the different types differently
 
     created_at - The time that this notification was created. This is
-    auto-populated with datetime.now()
-
-    link - The link to the object that created this notification.
-    i.e The link to a conversation between users, a link to view new
-    order details, etc.
+    auto-populated with datetime.now(). Mainly we will only be using
+    the 'get_date_time' method so it's easier to read for the user
+    WARNING - using now() in the default arg *may* cause issues but is 
+    a very easy fix.
 
     read - Indicates if the user has viewed the notification or not
 
@@ -43,12 +42,13 @@ class Notification(Base, BaseModelMixin):
 
     user_id = Column(Integer, ForeignKey("user.id"))
     message = Column(String(150), nullable=False)
+    # Generic link between objects
+    related_id = Column(Integer)
     notif_type = Column(String(60), nullable=False)
     # This may cause problems so it will need tested before
     # being used
-    created_at = Column(DateTime, default=now())
+    created_at = Column(DateTime, default=now)
     read = Column(Boolean, default=False)
-    link = Column(String) # Likely to be removed
 
     def get_date_time(self):
         """

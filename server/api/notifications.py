@@ -18,7 +18,8 @@ def mark_read(**kwargs):
     Mark a notification as read
     """
     response_dict = {}
-    notif_id =  request.args.get('id', None)
+    # Probably needs to be json
+    notif_id =  request.get_json().get('id', None)
     # Try to get the notification id
     if notif_id == None:
         response_dict['status'] = 417
@@ -50,7 +51,7 @@ def create_notification(**kwargs):
     with the logged in user
     """
     response_dict = {}
-    request_args = request.json
+    request_args = request.get_json()
     user = kwargs['user']
     notif_info = {}
     # Get all the provided fields from the info in the request
