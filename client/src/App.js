@@ -25,12 +25,11 @@ function App() {
       <UserProvider value={{ user, setUser, loggedIn, setLoggedIn }}>
         <BrowserRouter>
           <Switch>
-            <ProtectedRoute path="/chef_profile" component={ChefProfile} />
+            <ProtectedRoute path="/chef_profile" component={ChefProfilePage} />
             <ProtectedRoute path="/user_profile" component={ProfilePage} />
             <Route path="/signin" component={SignInPage} />
             <Route path="/signup" component={SignUpPage} />
             <Route path="/test" component={TestPage} />
-            <Route path="/chef" component={ChefProfilePage} />
             <Route path="/upload" component={UploadPage} />
             <Route component={PageNotFound} />
             <Route exact path="/">

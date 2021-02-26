@@ -74,12 +74,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: "center",
     flexWrap: "wrap",
   },
-  bioContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
-  },
   cardBio: {
-
     flexDirection: "column",
     alignSelf: "center",
     textAlign: "center",

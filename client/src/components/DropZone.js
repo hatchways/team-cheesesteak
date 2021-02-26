@@ -102,7 +102,7 @@ const DropZone = (props) => {
 					<em>(Only *.jpg, *.jpeg and *.png images will be accepted)</em>
 					{isDragAccept && (<p>All files will be accepted</p>)}
 					{isDragReject && (<p>Some files will be rejected</p>)}
-					{!isDragActive && (<p>Drag 'n' drop some files here, or click to select files</p>)}
+					{!isDragActive && (<p>Drag 'n' drop in Image here, or click to select one</p>)}
 				</div>
 				<aside>
 					<h4>Preview</h4>

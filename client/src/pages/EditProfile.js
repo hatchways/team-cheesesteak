@@ -13,6 +13,7 @@ import {
 
 import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
+import DropZone from "../components/DropZone";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -47,9 +48,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const EditProfile = () => {
+  //example for upload is in the upload.js
   const classes = useStyles();
   const [profileOpen, setprofileOpen] = useState(false);
-
+  const [response, setResponse] = useState();
+  const [file, setFile] = useState();
+  
   const handleprofileOpen = () => {
     setprofileOpen(true);
   };
@@ -61,6 +65,7 @@ const EditProfile = () => {
     //process form
     handleprofileClose();
   };
+  
   const { handleSubmit } = useForm({});
 
   return (
@@ -80,7 +85,7 @@ const EditProfile = () => {
         </DialogTitle>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogContent>
-            <Avatar src="" alt="profile" className={classes.avatar} />
+            <DropZone onDrop={setFile} file={file} />
             <TextField
               autoFocus
               required
