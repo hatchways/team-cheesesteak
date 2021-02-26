@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core/styles";
+import EditProfile from "./EditProfile";
 import chefPic from "../Assets/chefPic.png";
 import chefBackground from "../Assets/chefBackground.png";
 
@@ -67,14 +68,14 @@ const useStyles = makeStyles(theme => ({
     color: "#F8F8FF",
     backgroundColor: "#ff743d",
     "&:hover": {
-      backgroundColor: "#f04040",
+      backgroundColor: "#FF510C",
     },
     marginTop: 20,
     padding: 16,
   },
 }));
 
-const ChefContent = () => {
+const ChefContent = ({ profileDisplay }) => {
   const classes = useStyles();
   return (
     <Grid className={classes.root} item xs={12} sm={12} md={4} lg={3}>
@@ -100,6 +101,7 @@ const ChefContent = () => {
           >
             Send Request
           </Button>
+          {profileDisplay && <EditProfile />}
         </Grid>
       </Paper>
     </Grid>

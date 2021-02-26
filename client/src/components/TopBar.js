@@ -19,7 +19,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import { Link } from "react-router-dom";
 
-import UserContext from '../context/User'
+import UserContext, {logOut} from '../context/User'
+import Logo from '../Assets/images/Logo.png'
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -57,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
 function TopBar(props) {
 
 	const classes = useStyles();
-	const user = useContext(UserContext)
+	const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext)
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 
@@ -82,7 +83,6 @@ function TopBar(props) {
 		setTop({ ...top, 'top': open });
 	};
 
-
 	const list = () => (
 		<Grid
 			className='top'
@@ -106,14 +106,15 @@ function TopBar(props) {
 		<Grid className={classes.root}>
 			<AppBar position="static" className={classes.AppBar}>
 				<Toolbar>
-
-					<Typography variant="h5" className={classes.title}>
-						<Link to='/' className={classes.AppBarLink}>CHEF'S MENU</Link>
-					</Typography>
-					<IconButton edge="start" onClick={toggleDrawer(true)} className={classes.menuButton} color="inherit" aria-label="menu">
-						<DragHandleIcon />
-					</IconButton>
+					<Grid className={classes.title}>
+						<Link to='/' className={classes.AppBarLink}>
+							<img src={Logo} alt='logo home link'/>
+						</Link>
+					</Grid>
 					<Grid>
+						<IconButton edge="start" onClick={toggleDrawer(true)} className={classes.menuButton} color="inherit" aria-label="menu">
+							<DragHandleIcon />
+						</IconButton>
 						<IconButton
 							aria-label="account of current user"
 							aria-controls="menu-appbar"
@@ -139,7 +140,12 @@ function TopBar(props) {
 							onClose={handleClose}
 						>
 							<MenuItem onClick={handleClose}><Link to='/profile' className={classes.AppBarLink}>Profile</Link></MenuItem>
-							<MenuItem>Logout</MenuItem>
+							<MenuItem onClick={() => {
+								fetch("/auth/logout");
+								setUser(null);
+								setLoggedIn(false);
+							}
+							}><Link to="/signin">Logout</Link></MenuItem>
 						</Menu>
 					</Grid>
 				</Toolbar>

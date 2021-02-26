@@ -12,6 +12,7 @@ config = "*"
 psycopg2-binary = "*"
 sqlalchemy = "*"
 python-dotenv = "*"
+setuptools = "*"
 
 [requires]
 python_version = "3.9"

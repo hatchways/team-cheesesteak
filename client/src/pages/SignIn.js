@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Button,
   Typography,
@@ -7,11 +7,11 @@ import {
   CardContent,
   Grid,
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import BackgroundImg from "../Assets/images/signUpBkg.png";
 import ChefsMenuLogo from "../Assets/images/Logo.png";
-
+import UserContext from "../context/User";
 const signInPageStyle = (theme) => ({
   signInContainer: {
     fontFamily: '"Roboto"',
@@ -64,15 +64,43 @@ const signInPageStyle = (theme) => ({
   },
 });
 
+
 const SignInPage = (props) => {
   const { classes } = props;
+  const { user, setUser, loggedIn, setLoggedIn } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState(null);
+  const [redirect, setRedirect] = useState('');
 
-  console.log(email, password); // Just added for now to avoid the warning saying both are assigned, but not used.
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    const data = {email: email, password: password};
+    fetch('/auth/login', {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json"
+      },
+      redirect: "manual",
+      body: JSON.stringify(data)
+    }).then(response => response.json()).then(data => {
+      if (data.status === 200) {
+        setUser(data.user);
+        setLoggedIn(true);
+        if (data.user.profile.is_chef === "true"){
+          setRedirect(<Redirect to="/chef_profile" />);
+        } else {
+          setRedirect(<Redirect to="/user_profile" />);
+        }
+      } else {
+      setMessage(data.message);
+      }
+    })
+  }
   return (
     <Grid container direction="row" className={classes.signInContainer}>
       <Grid item md={6} sm={12}>
+        {redirect}
         <Grid
           container
           direction="column"
@@ -86,7 +114,9 @@ const SignInPage = (props) => {
                 <Typography className={classes.title} gutterBottom>
                   Login
                 </Typography>
-                <form autoComplete="off">
+                {message && <Typography>{message}</Typography>}
+
+                <form onSubmit={handleSignIn} autoComplete="off">
                   <Grid
                     container
                     direction="column"
@@ -119,7 +149,8 @@ const SignInPage = (props) => {
                       />
                     </Grid>
                     <Grid item>
-                      <Button type="submit" className={classes.button}>
+                      <Button type="submit"
+                        className={classes.button}>
                         Sign In
                       </Button>
                     </Grid>

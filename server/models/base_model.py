@@ -109,6 +109,7 @@ class BaseModelMixin(object):
             new_instance.set_password(info.get('password'))
             info.pop('password')
 
+
         for field, value in info.items():
             if hasattr(cls, field):
                 if field == "password_hash":
@@ -200,3 +201,7 @@ class BaseModelMixin(object):
         setattr(self, field, instance)
         session.add(self)
         session.commit()
+
+    @staticmethod
+    def do_rollback():
+        session.rollback()

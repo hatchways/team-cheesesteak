@@ -9,6 +9,7 @@ import {
   CardMedia,
   Chip,
 } from "@material-ui/core";
+import EditRecipe from "./EditRecipe";
 import sushi from "../Assets/sushi.png";
 
 const useStyles = makeStyles(theme => ({
@@ -77,7 +78,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const RecipeContent = () => {
+const RecipeContent = ({ profileDisplay }) => {
   const classes = useStyles();
   return (
     <Grid item className={classes.root}>
@@ -107,6 +108,7 @@ const RecipeContent = () => {
                 Required Stuff:
               </Typography>
               <Typography>Kitchen, plates.</Typography>
+              {profileDisplay && <EditRecipe />}
             </CardContent>
           </Grid>
           <CardMedia className={classes.dishImage} image={sushi}></CardMedia>
