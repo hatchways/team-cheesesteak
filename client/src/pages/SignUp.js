@@ -12,6 +12,7 @@ import { withStyles } from "@material-ui/core/styles";
 import BackgroundImg from "../Assets/images/signUpBkg.png";
 import ChefsMenuLogo from "../Assets/images/Logo.png";
 import UserContext from "../context/User";
+import AutocompletePlaces from "../components/AutocompletePlaces";
 
 const regPattern = new RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i);
 
@@ -78,11 +79,14 @@ const SignUpPage = (props) => {
   const [passwordError, setPasswordError] = useState("");
   const [passwordConfirmError, setPasswordConfirmError] = useState("");
   const [message, setMessage] = useState(null);
+  const [location, setLocation] = useState('')
 
-
+  const locationState = {location,setLocation}
+  
   const handleSignUp = (e) => {
     e.preventDefault();
-    const data = {email: email, password: password, name: username};
+    const data = {email: email, password: password, name: username, location};
+    
     fetch('/auth/signup', {
       method: "POST",
       headers: {
@@ -225,13 +229,12 @@ const SignUpPage = (props) => {
                         placeholder="Re-enter password"
                         variant="outlined"
                         onChange={(e) => validateChange(e)}
-                        error={
-                          passwordConfirmError !== "Passwords not matching"
-                            ? false
-                            : true
-                        }
+                        error={passwordConfirmError === "Passwords not matching"}
                         helperText={passwordConfirmError}
                       />
+                    </Grid>
+                    <Grid item>
+                      <AutocompletePlaces locationState={locationState} variant="outlined" className={classes.textField} />
                     </Grid>
                     <Grid item>
                       <Button type="submit" className={classes.button}>

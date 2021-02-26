@@ -11,8 +11,8 @@ import {
 
 } from "@material-ui/core";
 import EditProfile from "./EditProfile";
-import profile_pic from "../Assets/woman_profile.png";
 import UserContext from "../context/User";
+import Map from "../components/Map";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -74,10 +74,6 @@ const useStyles = makeStyles(theme => ({
     textAlign: "center",
     flexWrap: "wrap",
   },
-  bioContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
-  },
   cardBio: {
 
     flexDirection: "column",
@@ -124,19 +120,19 @@ const useStyles = makeStyles(theme => ({
   cuisineText: {
     color: 'white',
     fontStyle: 'bold',
-  },
-  // Footer
-  mapImage: {
-    width: "100%",
-  },
+  }
 }));
 
 export default function ProfilePage(props) {
   const { user } = useContext(UserContext);
-  const map =
-    'https://lun-us.icons8.com/a/ybbxUKFceUicCgkzopwXcA/njrM31xG9kms8VRKbon19A/Slice.png';
   const classes = useStyles();
-
+  const location = {
+    address: '2369 wildwood cres., Pickering, ON',
+    lat: 43.85537,
+    lng: -79.08654899999999,
+    radius: 5,
+  } // our location object from earlier
+  
   return (
     <Grid container xs={12} className={classes.outerGrid}>
       <Grid container xs={12} sm={12} md={8} className={classes.innerGrid}>
@@ -224,7 +220,7 @@ export default function ProfilePage(props) {
         </Grid>
         {/* Footing */}
         <Grid xs={12} className={classes.locationMap} item>
-          <img className={classes.mapImage} src={map} />
+          <Map location={location} zoomLevel={10} />
         </Grid>
       </Grid>
     </Grid>

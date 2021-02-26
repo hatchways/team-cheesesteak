@@ -8,11 +8,12 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Avatar,
+  Avatar, FormControl,
 } from "@material-ui/core";
 
 import CloseIcon from "@material-ui/icons/Close";
 import Edit from "@material-ui/icons/Edit";
+import AutocompletePlaces from '../components/AutocompletePlaces'
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -49,7 +50,9 @@ const useStyles = makeStyles(theme => ({
 const EditProfile = () => {
   const classes = useStyles();
   const [profileOpen, setprofileOpen] = useState(false);
-
+  const [location, setLocation] = useState('')
+  const locationState = {location,setLocation}
+  
   const handleprofileOpen = () => {
     setprofileOpen(true);
   };
@@ -81,34 +84,32 @@ const EditProfile = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogContent>
             <Avatar src="" alt="profile" className={classes.avatar} />
-            <TextField
-              autoFocus
-              required
-              margin="dense"
-              id="name"
-              label="Full Name"
-              type="text"
-              fullWidth
-            />
-            <TextField
-              autoFocus
-              required
-              margin="dense"
-              id="address"
-              label="Location"
-              type="text"
-              fullWidth
-            />
-            <TextField
-              autoFocus
-              multiline
-              rowsMax="4"
-              margin="dense"
-              id="aboutMe"
-              label="About Me"
-              type="text"
-              fullWidth
-            />
+            <FormControl fullWidth>
+              <TextField
+                autoFocus
+                required
+                margin="dense"
+                id="name"
+                label="Full Name"
+                type="text"
+                fullWidth
+              />
+            </FormControl>
+            <FormControl fullWidth>
+              <AutocompletePlaces locationState={locationState} />
+            </FormControl>
+            <FormControl fullWidth>
+              <TextField
+                autoFocus
+                multiline
+                rowsMax="4"
+                margin="dense"
+                id="aboutMe"
+                label="About Me"
+                type="text"
+                fullWidth
+              />
+            </FormControl>
           </DialogContent>
           <Button type="submit" className={classes.submit}>
             Submit
