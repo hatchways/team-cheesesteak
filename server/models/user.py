@@ -14,7 +14,7 @@ from models.base_model import Base, BaseModelMixin
 # the database
 from models.recipe import Recipe
 from models.profile import Profile
-
+from models.message import Message
 
 class User(Base, BaseModelMixin):
     __tablename__ = "user"
@@ -33,7 +33,6 @@ class User(Base, BaseModelMixin):
     email = Column(String(150), index=True, unique=True, nullable=False)
     password_hash = Column(String(128), nullable=False)
 
-    # Relationships
     # This requires the Profile model to link back to the user model
     profile = relationship("Profile", uselist=False, backref="user", cascade="all, delete-orphan")
 
