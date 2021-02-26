@@ -11,7 +11,6 @@ import {
 
 } from "@material-ui/core";
 import EditProfile from "./EditProfile";
-import profile_pic from "../Assets/woman_profile.png";
 import UserContext from "../context/User";
 
 const useStyles = makeStyles(theme => ({
@@ -73,10 +72,6 @@ const useStyles = makeStyles(theme => ({
   headRightContainer: {
     textAlign: "center",
     flexWrap: "wrap",
-  },
-  bioContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
   },
   cardBio: {
 

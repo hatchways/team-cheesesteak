@@ -12,6 +12,7 @@ config = "*"
 psycopg2-binary = "*"
 sqlalchemy = "*"
 setuptools = "*"
+stripe = "*"
 
 [requires]
 python_version = "3.8"
