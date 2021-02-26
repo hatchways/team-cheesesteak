@@ -33,3 +33,4 @@ instance/
 
 #TODO add .env to your gitignore
 .env
+server/.env
