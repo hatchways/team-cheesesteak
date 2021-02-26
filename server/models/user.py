@@ -15,6 +15,9 @@ from models.base_model import Base, BaseModelMixin
 from models.recipe import Recipe
 from models.profile import Profile
 from models.message import Message
+from config import API_KEY
+from handlers.GoogleAPIHandler import GoogleAPIHandler
+import requests
 
 class User(Base, BaseModelMixin):
     __tablename__ = "user"
@@ -47,6 +50,22 @@ class User(Base, BaseModelMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+    def get_geocode(self):
+        """
+        Return geocodes based on string address input
+        """
+        url = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (self.street_address, API_KEY)
+        google_req = requests.get(url).json()
+        googleHandler = GoogleAPIHandler(google_req)
+        status = googleHandler.handle()
+
+        if status != 'OK':
+            raise Exception(status['msg'])
+        
+        #return geocodes
+        return google_req['results'][0]['geometry']['location']
 
     @staticmethod
     def credentials_match(email, password):
