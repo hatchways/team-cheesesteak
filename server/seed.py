@@ -189,8 +189,20 @@ def seed_database(debug=False):
             'image_urls': "https://images.unsplash.com/photo-1504669221159-56caf7b07f57?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80,",
         },
     ]
+    # Add latitude/longitude fields to the users
+    for user in user_dicts:
+        address_info = [
+            user['street_address'],
+            user['city'],
+            user['state_or_province'],
+            user['country'],
+        ]
+        full_address = " ,".join(address_info)
+        geocode = User.get_geocode(full_address)
+        user['latitude'] = geocode.get('lat')
+        user['longitude'] = geocode.get('lng')
+
     for index in range(len(user_dicts)):
-        print(index)
         new_user = User.create(**user_dicts[index])
 
             # Create profile     
@@ -200,7 +212,6 @@ def seed_database(debug=False):
             # Assign the new profile to the new user
         new_user.assign_one_to_one('profile', new_profile)
 
-            # Create 5 recipes for each user/profile
         new_recipe = Recipe.create(**recipe_dicts[index])
                 # Add the new recipe to the One to Many field in the Profile model
         new_profile.add_to_relationship('recipes', new_recipe)
