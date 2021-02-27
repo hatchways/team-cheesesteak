@@ -14,6 +14,7 @@ def new_message(**kwargs):
     user = kwargs['user']
     request_dict = request.get_json()
     receiver_id = request.get('receiver_id', None)
+    receiver = User.get_instance(**{'id': receiver_id})
     if receiver_id == None:
         response_dict['status'] = 400
         response_dict['message'] = "Cannot create a new message with no receiving user"
@@ -22,7 +23,10 @@ def new_message(**kwargs):
     # instance using the receiver_id passed in the request
     message_info = {}
     try:
-        message_info['receiver'] = User.get_instance(**{'id': receiver_id})
+        # Sending user should already have their information
+        # populated from the user context provider, no need to add it
+        message_info['receiver'] = receiver.to_dict(excludes=['profile', 'password_hash'])
+        message_info['receiver']['profile'] = receiver.profile.to_dict(excludes=['user_id', 'recipes', 'user'])
     except NoResultFound:
         response_dict['status'] = 404
         response_dict['message'] = "User with id %s does not exist" % (receiver_id)
@@ -59,9 +63,8 @@ def received_messages(**kwargs):
         message_dict = message.to_dict(exclude=['receiver', 'sender', 'created_at'])
         message_dict['sender'] = message.sender.profile.name
         message_dict['sender_image_url'] = message.sender.profile.profile_image
-        message['created_at'] = message.get_formatted_date_time
-        message_dict['time'] = message.get_formatted_time
-        message_dict['date'] = mesage.get_formatted_date
+        for field, value in message.get_formatted_info.items():
+            message_dict[field] = value
         response_dict['messages'].append(message_dict)
 
     return jsonify(response_dict), 200
@@ -80,9 +83,8 @@ def sent_messages(**kwargs):
 
     for message in messages:
         message_dict = message.to_dict(excludes=['sender', 'receiver', 'created_at'])
-        message_dict['created_at'] = message.get_formatted_date_time
-        message_dict['time'] = message.get_formatted_time
-        message_dict['date'] = mesage.get_formatted_date
+        for field, value in message.get_formatted_info.items():
+            message_dict[field] = value
         message['receiver'] = message.receiver.profile.name
         message['receiver_image'] = message.receiver.profile.profile_image
         response_dict['messages'].append(message_dict)
@@ -152,10 +154,8 @@ def conversation_messages(**kwargs):
         # Replace objects with names
         message_dict['sender'] = message.sender.profile.name
         message_dict['receiver'] = message.receiver.profile.name
-        # Give back an easy to read date/time the message was sent
-        message_dict['created_at'] = message.get_formatted_date_time
-        message_dict['time'] = message.get_formatted_time
-        message_dict['date'] = mesage.get_formatted_date
+        for field, value in message.get_formatted_info.items():
+            message_dict[field] = value
         response_dict['messages'].append(message_dict)
     return jsonify(response_dict), 200
 
