@@ -1,8 +1,10 @@
-from datetime.datetime import now, strfstring
+
+from datetime import datetime
 from sqlalchemy import (
     Column, String,
     Integer, ForeignKey,
-    Text, Boolean
+    Text, Boolean,
+    DateTime
     )
 from sqlalchemy.orm import relationship, validates
 from models.base_model import Base, BaseModelMixin
@@ -27,12 +29,22 @@ class Message(Base, BaseModelMixin):
     __tablename__ = "message"
 
     id = Column(Integer, primary_key=True)
+    receiver_id = Column(Integer, ForeignKey('user.id'))
+    sender_id = Column(Integer, ForeignKey('user.id'))
 
-    sender = relationship("User")
-    receiver = relationship("User")
+    sender = relationship("User", foreign_keys=[sender_id])
+    receiver = relationship("User", foreign_keys=[receiver_id])
     file_url = Column(String)
     content = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=now)
+    created_at = Column(DateTime, default=datetime.now)
+
+    @property
+    def get_formatted_info(self):
+        info = {}
+        info['time'] = self.get_formatted_time
+        info['date'] = self.get_formatted_date
+        info['created_at'] = self.get_formatted_date_time
+        return info
 
     @property
     def get_formatted_date_time(self):
