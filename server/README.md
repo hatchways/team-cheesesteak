@@ -1,4 +1,11 @@
 # Seeding Your Database with seed_database()
+
+### Setup
+1. Download/Setup postgres and run the service
+	i) For Mac: https://postgresapp.com/downloads.html
+	ii) For PC: https://www.postgresql.org/download/windows/
+2. setup Path: sudo mkdir -p /etc/paths.d && echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/paths.d/postgresapp
+3. create your database and ensure you have your credentials (i.e username, password, port, database name)
 ### Running The Script
 To run the script, navigate to the server directory then open a python shell with ```pipenv run python```. If you do not have any tables in your database/have not ran ```Base.metadata.create_all(engine)``` you must follow steps 1-4, otherwise start from step 5
 1. Import the declarative base with ```from models.base_model import Base``` (see below for more information about why it MUST be imported from models.base_model)
