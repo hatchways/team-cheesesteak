@@ -1,9 +1,6 @@
-import React, {useEffect, useState, useRef } from 'react'
+import React, { useState } from 'react'
 import {
 	Grid,
-	List,
-	ListItem,
-	ListItemText,
 	TextField, makeStyles
 } from "@material-ui/core";
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -25,23 +22,18 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const AutocompletePlaces = ({variant,className, locationState}) => {
-	const [display,setDisplay] = useState(false)
 	const [options,setOptions] = useState([])
 	const {location,setLocation} = locationState
 	const classes = useStyles()
 	
 	const handleAutocomplete = e => {
 		setLocation(e.target.value)
-		if (location.length < 2 || (e.type === 'keydown' && e.key === 'Delete')) {
-			console.log(e.type)
-			setDisplay(false)
-			return
-		}
-		console.log(e.target.value)
+		
 		const options = {
 			method: "POST",
 			body: JSON.stringify({ location })
 		}
+		
 		fetch('/api/autocomplete',options)
 		.then(res => {
 			if (res.status < 500) return res.json()
@@ -50,7 +42,6 @@ const AutocompletePlaces = ({variant,className, locationState}) => {
 		.then(res => {
 			const locations= res.response.locations ?? []
 			setOptions(locations)
-			options? setDisplay(true) : setDisplay(false)
 		})
 		.catch(err => {
 			console.log(err.message)
@@ -71,7 +62,6 @@ const AutocompletePlaces = ({variant,className, locationState}) => {
 							fullWidth
 							label='Address'
 							name="location"
-							margin="dense"
 							value={location}
 							className={className}
 							margin="normal"

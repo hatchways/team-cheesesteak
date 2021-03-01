@@ -1,5 +1,5 @@
 import React from 'react'
-import {Grid, Typography} from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 import { Icon } from '@iconify/react'
 import circleFill from '@iconify/icons-akar-icons/circle-fill';
 
@@ -14,13 +14,11 @@ const useStyles = makeStyles(theme => ({
 	pinIcon: {
 		color: theme.light,
 		fontSize: '1rem',
-		
 	},
 	pinRadius: {
 		position: 'absolute',
 		top: '-45%',
 		left:'-45%',
-		// right: '-50%',
 		width: '130px',
 		height: '130px',
 		border: '3px solid rgb(255, 81, 12)',
@@ -29,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 	}
 }))
 
-const MapPin = ({text}) => {
+const MapPin = () => {
 	const styles = useStyles()
 	return (
 		<Grid className={styles.pin}>

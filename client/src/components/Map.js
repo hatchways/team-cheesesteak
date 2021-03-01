@@ -1,5 +1,5 @@
 import React, {useContext} from 'react'
-import {Grid, makeStyles, Typography} from "@material-ui/core";
+import {Grid, makeStyles} from "@material-ui/core";
 import UserContext from "../context/User";
 import MapPin from "../components/MapPin";
 import GoogleMapReact from 'google-map-react'
@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
 	}
 }))
 
-const Map = ({zoomLevel, location, radius}) => {
+const Map = ({zoomLevel, location}) => {
 	
 	const classes = useStyles();
 	const { user } = useContext(UserContext);
@@ -26,10 +26,8 @@ const Map = ({zoomLevel, location, radius}) => {
 						
 				>
 					<MapPin
-						radius={zoomLevel}
 						lat={location.lat}
 						lng={location.lng}
-						text={location.address}
 						radius={location.radius}
 					/>
 				</GoogleMapReact>
@@ -39,36 +37,3 @@ const Map = ({zoomLevel, location, radius}) => {
 }
 
 export default Map
-
-// 	.map-h2 {
-// 	text-transform: uppercase;
-// 	font-size: 1rem;
-// 	padding: 20px;
-// 	padding-left: 10px;
-// 	text-align: center;
-// }
-//
-// .google-map {
-// 	width: 100%;
-// 	height: 60vh;
-// }
-//
-//
-// @media screen and (min-width: 799px) {
-// .google-map {
-// 		height: 80vh;
-// 	}
-//
-// .map-h2 {
-// 		font-size: 1.3rem;
-// 		font-weight: 400;
-// 	}
-//
-// .pin {
-// 		width: 15vw;
-// 	}
-//
-// .pin-icon {
-// 		font-size: 10vw;
-// 	}
-// }

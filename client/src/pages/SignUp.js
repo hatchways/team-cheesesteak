@@ -71,10 +71,10 @@ const signUpPageStyle = (theme) => ({
 const SignUpPage = (props) => {
   const [redirect, setRedirect] = useState("");
   const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext);
-  const [username, setUserName] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [usernameError, setUserNameError] = useState("");
+  const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [passwordConfirmError, setPasswordConfirmError] = useState("");
@@ -85,7 +85,7 @@ const SignUpPage = (props) => {
   
   const handleSignUp = (e) => {
     e.preventDefault();
-    const data = {email: email, password: password, name: username, location};
+    const data = {email, password, name, location};
     
     fetch('/auth/signup', {
       method: "POST",
@@ -113,11 +113,11 @@ const SignUpPage = (props) => {
     switch (e.target.name) {
       case "signupName": {
         if (e.target.value.length === 0) {
-          setUserNameError("Field should not be empty.");
+          setNameError("Field should not be empty.");
         } else {
-          setUserNameError("");
+          setNameError("");
         }
-        setUserName(e.target.value);
+        setName(e.target.value);
         break;
       }
       case "signupEmail": {
@@ -182,12 +182,12 @@ const SignUpPage = (props) => {
                         autoFocus
                         name="signupName"
                         label="Name"
-                        value={username}
+                        value={name}
                         placeholder="Enter your name"
-                        error={usernameError !== "" ? true : false}
+                        error={nameError !== ""}
                         variant="outlined"
                         onChange={(e) => validateChange(e)}
-                        helperText={usernameError}
+                        helperText={nameError}
                       />
                     </Grid>
                     <Grid item>
@@ -199,7 +199,7 @@ const SignUpPage = (props) => {
                         value={email}
                         placeholder="Enter your e-mail address"
                         variant="outlined"
-                        error={emailError !== "" ? true : false}
+                        error={emailError !== ""}
                         helperText={emailError}
                         onChange={(e) => validateChange(e)}
                       />
@@ -212,7 +212,7 @@ const SignUpPage = (props) => {
                         name="signupPwd"
                         label="Password"
                         value={password}
-                        error={passwordError !== "" ? true : false}
+                        error={passwordError !== ""}
                         placeholder="Enter password"
                         variant="outlined"
                         helperText={passwordError}
