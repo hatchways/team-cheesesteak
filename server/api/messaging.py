@@ -80,7 +80,7 @@ def conversation_messages(**kwargs):
 
 @messaging_views.route("/get_conversation_previews", methods=["GET"])
 @authenticate
-def get_convo_previews():
+def get_convo_previews(**kwargs):
     """
     Get all conversations this user has, then build a
     dictionary where the outer most key is 'messages'
