@@ -33,14 +33,16 @@ class Message(Base, BaseModelMixin):
     # Foreign Keys
     conversation_id = Column(Integer, ForeignKey("conversation.id"))
     sender_id = Column(Integer, ForeignKey('user.id'))
-    receiver_id = Column(Integer, ForeignKey('user.id'))
     # Relationships
     sender = relationship("User", foreign_keys=[sender_id])
-    receiver = relationship("User", foreign_keys=[receiver_id])
 
     file_url = Column(String)
     content = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
+
+    @property
+    def receiver(self):
+        return self.conversation.get_other_user(self.sender)
 
     @property
     def get_formatted_info(self):
@@ -96,19 +98,24 @@ class Conversation(Base, BaseModelMixin):
         order_by="desc(Message.created_at)"
     )
 
+    def get_other_user(self, first_user):
+        """
+        Get the other user in this conversation
+        This also works for getting the receiver of a message
+        """
+        if first_user.id != self.user_one.id:
+            return self.user_one
+        elif first_user.id != self.user_two.id:
+            return self.user_two
+
     @staticmethod
     def get_conversation(first_user, second_user):
-        conversation = session.query(Conversation).filter(and_(user_one=first_user, user_two=second_user)).first()
+        users = [first_user, second_user]
+        conversation = session.query(Conversation).filter(and_(Conversation.user_one.in_(users), conversation.user_two.in_(users))).first()
         # If the first query found nothing, attempt the inverse
         if conversation == None:
-            conversation = session.query(Conversation).filter(and_(user_one=second_user, user_two=first_user)).first()
-            # If the second attempt failed, there is no conversation between the users
-            if conversation == None:
-                raise NoResultFound("Failed to find conversation between %s and %s" % (first_user, second_user))
-            else:
-                return conversation
-        else:
-            return conversation
+            raise NoResultFound("Failed to find conversation between %s and %s" % (first_user, second_user))
+        return conversation
 
     @staticmethod
     def conversation_exists(first_user, second_user):
