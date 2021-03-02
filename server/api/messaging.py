@@ -14,12 +14,17 @@ def new_message(**kwargs):
     response_dict = {}
     user = kwargs['user']
     request_dict = request.get_json()
-    receiver_id = request.get('receiver_id', None)
-    receiver = User.get_instance(**{'id': receiver_id})
-    if receiver_id == None:
-        response_dict['status'] = 400
-        response_dict['message'] = "Cannot create a new message with no receiving user"
-        return jsonify(response_dict), 400
+    # Get or create a conversation between the users
+    if Conversation.conversation_exists(user, receiver):
+        conversation = Conversation.get_conversation(user, receiver)
+    else:
+        receiver_id = request.get('receiver_id', None)
+        receiver = User.get_instance(**{'id': receiver_id})
+        if receiver_id == None:
+            response_dict['status'] = 400
+            response_dict['message'] = "Cannot create a new message with no receiving user"
+            return jsonify(response_dict), 400
+        conversation = Conversation.create(**{'user_one': user, "user_two": receiver})
     # Get the receiving user by getting the corresponding
     # instance using the receiver_id passed in the request
     message_info = {}
@@ -38,65 +43,12 @@ def new_message(**kwargs):
             continue
         if request_dict.get(field, None) != None:
             message_info[field] = request_dict[field]
-    # Get or create a conversation between the users
-    if Conversation.conversation_exists(user, receiver):
-        message_info['conversation'] = Conversation.get_conversation(user, receiver)
-    else:
-        message_info['conversation'] = Conversation.create(**{'user_one': user, "user_two": receiver})
+    message_info['conversation'] = conversation
     new_message = Message.create(**message_info)
     message_info['conversation'].add_to_relationship('messages', new_message)
     response_dict['status'] = 201
     response_dict['message'] = "Successfully sent message to %s" % (message_info['receiver'].profile.name)
     return jsonify(response_dict), 201
-    
-
-@messaging_views.route("/get_received_messages", methods=["GET"])
-@authenticate
-def received_messages(**kwargs):
-    response_dict = {'messages': []}
-    user = kwargs['user']
-    # Try to get all received messages
-    # if no instances are found, catch 
-    # the exception and tell the user 
-    # there are no messages
-    try:
-        messages = Message.get_instance(multiple=True, **{'receiver': user})
-    except NoResultFound:    
-        response_dict['status'] = 204
-        response_dict['message'] = "You haven't received any messages yet"
-        return jsonify(response_dict), 204
-
-    for message in messages:
-        message_dict = message.to_dict(exclude=['receiver', 'sender', 'created_at'])
-        message_dict['sender'] = message.sender.profile.name
-        message_dict['sender_image_url'] = message.sender.profile.profile_image
-        for field, value in message.get_formatted_info.items():
-            message_dict[field] = value
-        response_dict['messages'].append(message_dict)
-
-    return jsonify(response_dict), 200
-
-@messaging_views.route('/get_sent_messages', methods=["GET"])
-@authenticate
-def sent_messages(**kwargs):
-    response_dict = {'messages': []}
-    user = kwargs['user']
-    try:
-        messages = Message.get_instance(multiple=True, **{'sender': user})
-    except NoResultFound:    
-        response_dict['status'] = 204
-        response_dict['message'] = "You haven't sent any messages yet"
-        return jsonify(response_dict), 204
-
-    for message in messages:
-        message_dict = message.to_dict(excludes=['sender', 'receiver', 'created_at'])
-        for field, value in message.get_formatted_info.items():
-            message_dict[field] = value
-        message['receiver'] = message.receiver.profile.name
-        message['receiver_image'] = message.receiver.profile.profile_image
-        response_dict['messages'].append(message_dict)
-    return jsonify(response_dict), 200
-
 
 @messaging_views.route('/get_conversation_messages', methods=["GET"])
 @authenticate
@@ -109,21 +61,11 @@ def conversation_messages(**kwargs):
     """
     response_dict = {'messages': []}
     user = kwargs['user']
-    other_user_id = request.get_json().get('other_user_id')
     try:
-        other_user = User.get_instance(**{'id': other_user_id})
-    except NoResultFound:
-        response_dict['status'] = 404
-        response_dict['message'] = "User with id %s does not exist" % (other_user_id)
-        return jsonify(response_dict), 404
-    # Get the conversation between the two users.
-    conversation = Conversation.get_conversation(user, other_user)
+        # Get the conversation between the two users.
+        conversation = Conversation.get_instance(**{'id': request.get_json().get('conversation_id')})
     # Messages in the conversation are already ordered by descending created_at (date/time)
     for message in conversation.messages.all():
-        if message.sender != user:
-            profile_image = message.sender.profile.profile_image
-        else:
-            profile_image = message.receiver.profile.profile_image
         message_dict = {
             'sender': message.sender.profile.name,
             'image_url': profile_image,
@@ -132,6 +74,7 @@ def conversation_messages(**kwargs):
         for field, value in message.get_formatted_info:
             message_dict[field] = value
         response_dict['messages'].append(message_dict)
+    response_dict['other_user_image'] = conversation.get_other_user(user).profile.profile_image
     response_dict['status'] = 200
     return jsonify(response_dict), 200
 
@@ -175,12 +118,12 @@ def get_convo_previews():
     for conversation in conversations:
         newest_message = conversation.messages.first()
         sender_profile = newest_message.sender.profile
-        if sender_profile.name != user.profile.name:
-            other_user_profile = sender_profile.name
+        if sender_profile.id != user.profile.id:
+            other_user_name = sender_profile.name
         else:
-            other_user = newest_message.receiver.profile.name
+            other_user_name = newest_message.receiver.profile.name
         message_info = {
-            'name': other_user_profile.name,
+            'name': other_user_name,
             'image_url': other_user_profile.profile_image,
             'content': newest_message.content,
             'created_at': newest_message.get_formatted_time

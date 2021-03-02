@@ -6,6 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from models.user import User
 from models.recipe import Recipe
 from models.profile import Profile
+from models.message import Message, Conversation
 #from models.models import User, Profile, Recipe
 
 def print_info(users, profiles, recipes):
@@ -189,10 +190,15 @@ def seed_database(debug=False):
             'image_urls': "https://images.unsplash.com/photo-1504669221159-56caf7b07f57?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80,",
         },
     ]
+    message_dicts = [
+        {
+
+        },
+    ]
+    last_user = None
     for index in range(len(user_dicts)):
         print(index)
         new_user = User.create(**user_dicts[index])
-
             # Create profile     
         new_profile = Profile()
         new_profile = new_profile.create(**profile_dicts[index])
@@ -200,8 +206,28 @@ def seed_database(debug=False):
             # Assign the new profile to the new user
         new_user.assign_one_to_one('profile', new_profile)
 
+        # If we have another user, create messages between the
+        # last one and the new one
+        if last_user != None:
+            new_conversation = Conversation.create(**{
+                'user_one': last_user,
+                'user_two': new_user
+            })
+            # Create messages for the two users
+            last_users_message = Message.create(**{
+                'sender': last_user,
+                'content': "Hello %s how are you?" % (new_user.profile.name)
+            })
+            new_users_message = Message.create(**{
+                'sender': new_user,
+                'content': "I'm good %s how about you?" % (last_user.profile.name)
+            })
+            # Add messages to the conversation
+            new_conversation.add_to_relationship('messages', last_users_message)
+            new_conversation.add_to_relationship('messages', new_users_message)
             # Create 5 recipes for each user/profile
         new_recipe = Recipe.create(**recipe_dicts[index])
                 # Add the new recipe to the One to Many field in the Profile model
         new_profile.add_to_relationship('recipes', new_recipe)
+        last_user = new_user
     print_info(user_dicts, profile_dicts, recipe_dicts)
