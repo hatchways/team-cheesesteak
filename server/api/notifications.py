@@ -41,63 +41,6 @@ def mark_read(**kwargs):
     response_dict['status'] = 200
     return jsonify(response_dict), 200
 
-
-
-@notif_views.route("/create_notification")
-@authenticate
-def create_notification(**kwargs):
-    """
-    Create a new notification and link it
-    with the logged in user
-    """
-    response_dict = {}
-    request_args = request.get_json()
-    user = kwargs['user']
-    notif_info = {}
-    # Get all the provided fields from the info in the request
-    for field in Notification.get_fields():
-        field_value = request_args.get(field, None)
-        if field_value != None:
-            notif_info[field] = field_value
-    notif_info['user'] = user
-    # Attempt to create the notification and add it to the
-    # users 'notifications' relationship field
-    try:
-        new_notification = Notification.create(**notif_info)
-        user.add_to_relationship('notifications', new_notification)
-    except AssertionError as e:
-        response_dict['status'] = 404
-        response_dict['message'] = "%s" % (e)
-        return jsonify(response_dict), 404
-    # Unexpected error likely from add_to_relationship
-    except Exception as e:
-        response_dict['status'] = 404
-        response_dict['message'] = "%s" % (e)
-        return jsonify(response_dict), 404
-
-    response_dict['status'] = 201
-    response_dict['message'] = "Notification created successfully"
-    return jsonify(response_dict), 201
-
-
-@notif_views.route("/delete_notification")
-@authenticate
-def delete_notification(**kwargs):
-    """
-    Remove a notification from the one to many field
-    in the logged in users instance and then delete
-    it from the database
-    """
-    response_dict = {}
-    user = kwargs['user']
-    notif_id = request.json.get('notif_id')
-    notification = Notification.get_instance(**{'id': notif_id})
-    user.remove_from_relationship('notifications', notification_id)
-    Notification.delete(notif_id)
-    response_dict['status'] = 200
-    return jsonify(response_dict), 200
-    
-
 @notif_views.route("/get_notifications")
 @authenticate
 def get_all_notifications(**kwargs):
