@@ -65,7 +65,7 @@ def signup():
             user_info['state_or_province'],
             user_info['country'],
         ]
-        full_address = " ,".join(address_info)
+        full_address = ", ".join(address_info)
         geocode = User.get_geocode(full_address)
         # Add to the user info dictionary to populate respective
         # fields on user creation
