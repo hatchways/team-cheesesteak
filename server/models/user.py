@@ -1,8 +1,10 @@
 import re
+import os
 from sqlalchemy import (
     Column, String,
     Integer, ForeignKey,
-    Text, Boolean
+    Text, Boolean,
+    Float
     )
 from sqlalchemy.orm import relationship, validates, backref
 from sqlalchemy.ext.declarative import declarative_base
@@ -17,7 +19,6 @@ from models.profile import Profile
 from config import API_KEY
 from handlers.GoogleAPIHandler import GoogleAPIHandler
 import requests
-
 class User(Base, BaseModelMixin):
     __tablename__ = "user"
     
@@ -30,6 +31,12 @@ class User(Base, BaseModelMixin):
     state_or_province = Column(String(30), default="Not entered")
     country = Column(String(30), default="Not entered")
     zip_code = Column(String(12), default="Not entered")
+    # Using float should only be within about a meter of error
+    # see the accepted answer in the accepted answer in this SO
+    # post. https://stackoverflow.com/questions/6604591/sqlalchemy-latitude-and-longitude-float-precision
+    # Use a precision of 10 to account for something like 180.1234567
+    latitude = Column(Float(10))
+    longitude = Column(Float(10))
 
     # Auth
     email = Column(String(150), index=True, unique=True, nullable=False)
@@ -62,6 +69,21 @@ class User(Base, BaseModelMixin):
         googleHandler = GoogleAPIHandler(google_req)
         status = googleHandler.handle()
 
+        if status != 'OK':
+            raise Exception(status['msg'])
+        
+        #return geocodes
+        return google_req['results'][0]['geometry']['location']
+
+    @staticmethod
+    def get_geocode(full_address):
+        """
+        Return geocodes based on string address input
+        """
+        url = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (full_address, API_KEY)
+        google_req = requests.get(url).json()
+        googleHandler = GoogleAPIHandler(google_req)
+        status = googleHandler.handle()
         if status != 'OK':
             raise Exception(status['msg'])
         
@@ -191,4 +213,3 @@ class User(Base, BaseModelMixin):
 
     def __repr__(self):
         return "<User(email='%s')>" % (self.email)
-

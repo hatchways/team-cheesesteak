@@ -58,6 +58,19 @@ def signup():
                 continue
             if request_dict.get(field, None) != None:
                 user_info[field] = request_dict[field]
+        # Create a full length address to get the geocode
+        address_info = [
+            user_info['street_address'],
+            user_info['city'],
+            user_info['state_or_province'],
+            user_info['country'],
+        ]
+        full_address = ", ".join(address_info)
+        geocode = User.get_geocode(full_address)
+        # Add to the user info dictionary to populate respective
+        # fields on user creation
+        user_info['latitude'] = geocode['latitude']
+        user_info['longitude'] = geocode['longitude']
         try:
             user = User.create(**user_info)
             # New profile info
@@ -68,7 +81,7 @@ def signup():
                 "profile_image": "No image uploaded",
                 "favourite_recipe": "None yet,",
                 "favourite_cuisine": "None yet,",
-                "location": "Unknown Location"
+                "location": user.get_province_and_country
             }
             profile = Profile.create(**placeholder_info)
             user.assign_one_to_one("profile", profile)
