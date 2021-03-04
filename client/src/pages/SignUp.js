@@ -12,6 +12,7 @@ import { withStyles } from "@material-ui/core/styles";
 import BackgroundImg from "../Assets/images/signUpBkg.png";
 import ChefsMenuLogo from "../Assets/images/Logo.png";
 import UserContext from "../context/User";
+import AutocompletePlaces from "../components/AutocompletePlaces";
 
 const regPattern = new RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i);
 
@@ -70,19 +71,22 @@ const signUpPageStyle = (theme) => ({
 const SignUpPage = (props) => {
   const [redirect, setRedirect] = useState("");
   const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext);
-  const [username, setUserName] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [usernameError, setUserNameError] = useState("");
+  const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [passwordConfirmError, setPasswordConfirmError] = useState("");
   const [message, setMessage] = useState(null);
+  const [location, setLocation] = useState('')
 
-
+  const locationState = {location,setLocation}
+  
   const handleSignUp = (e) => {
     e.preventDefault();
-    const data = {email: email, password: password, name: username};
+    const data = {email, password, name, location};
+    
     fetch('/auth/signup', {
       method: "POST",
       headers: {
@@ -109,11 +113,11 @@ const SignUpPage = (props) => {
     switch (e.target.name) {
       case "signupName": {
         if (e.target.value.length === 0) {
-          setUserNameError("Field should not be empty.");
+          setNameError("Field should not be empty.");
         } else {
-          setUserNameError("");
+          setNameError("");
         }
-        setUserName(e.target.value);
+        setName(e.target.value);
         break;
       }
       case "signupEmail": {
@@ -178,12 +182,12 @@ const SignUpPage = (props) => {
                         autoFocus
                         name="signupName"
                         label="Name"
-                        value={username}
+                        value={name}
                         placeholder="Enter your name"
-                        error={usernameError !== "" ? true : false}
+                        error={nameError !== ""}
                         variant="outlined"
                         onChange={(e) => validateChange(e)}
-                        helperText={usernameError}
+                        helperText={nameError}
                       />
                     </Grid>
                     <Grid item>
@@ -195,7 +199,7 @@ const SignUpPage = (props) => {
                         value={email}
                         placeholder="Enter your e-mail address"
                         variant="outlined"
-                        error={emailError !== "" ? true : false}
+                        error={emailError !== ""}
                         helperText={emailError}
                         onChange={(e) => validateChange(e)}
                       />
@@ -208,7 +212,7 @@ const SignUpPage = (props) => {
                         name="signupPwd"
                         label="Password"
                         value={password}
-                        error={passwordError !== "" ? true : false}
+                        error={passwordError !== ""}
                         placeholder="Enter password"
                         variant="outlined"
                         helperText={passwordError}
@@ -225,13 +229,12 @@ const SignUpPage = (props) => {
                         placeholder="Re-enter password"
                         variant="outlined"
                         onChange={(e) => validateChange(e)}
-                        error={
-                          passwordConfirmError !== "Passwords not matching"
-                            ? false
-                            : true
-                        }
+                        error={passwordConfirmError === "Passwords not matching"}
                         helperText={passwordConfirmError}
                       />
+                    </Grid>
+                    <Grid item>
+                      <AutocompletePlaces locationState={locationState} variant="outlined" className={classes.textField} />
                     </Grid>
                     <Grid item>
                       <Button type="submit" className={classes.button}>
