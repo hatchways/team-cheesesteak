@@ -32,12 +32,10 @@ function App() {
                 component={ConversationPage}
               />
             <Route path="/signin" component={SignInPage} />
+            <Redirect from="/" to="/signin"/>
             <Route path="/signup" component={SignUpPage} />
             <Route path="/test" component={TestPage} />
             <Route component={PageNotFound} />
-            <Route exact path="/">
-              <Redirect to="/signin" />
-            </Route>
           </Switch>
         </BrowserRouter>
       </UserProvider>
