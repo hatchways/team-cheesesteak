@@ -189,16 +189,20 @@ export const InboxPage = () => {
       const response = await fetch("/messaging/get_conversation_previews");
       const data = await response.json()
       if (data.status === 200){
+        console.log(data.messages);
         setConversationPreviews(data.messages);
       }else{
         setMessage("No conversations yet");
       }
     }
     if(conversationPreviews === ""){
+      console.log("getting previews!");
       getConversationPreviews();
+    }else{
+      console.log("No need to get message previews");
     }
-
   });
+  console.log(conversationPreviews);
   if(conversationPreviews === ""){
     return(
       <Grid container className={classes.loadingContainer}>
@@ -249,6 +253,7 @@ export const ConversationPage = (props) => {
   const theme = useTheme();
   const {user} = useContext(UserContext);
   const conversationID = props.location.state.conversation_id;
+  console.log(conversationID);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [conversationMessages, setConversationMessages] = useState(
     ""
@@ -274,6 +279,7 @@ export const ConversationPage = (props) => {
         body: JSON.stringify(requestData)
       });
       const responseData = await response.json();
+      console.log(responseData)
       setConversationMessages(responseData.messages);
       setOtherUserName(responseData.other_user_name);
     }

@@ -111,7 +111,7 @@ class Conversation(Base, BaseModelMixin):
     @staticmethod
     def get_conversation(first_user, second_user):
         users = [first_user, second_user]
-        conversation = session.query(Conversation).filter(and_(Conversation.user_one.in_(users), conversation.user_two.in_(users))).first()
+        conversation = session.query(Conversation).filter(and_(Conversation.user_one.in_(users), Conversation.user_two.in_(users))).first()
         # If the first query found nothing, attempt the inverse
         if conversation == None:
             raise NoResultFound("Failed to find conversation between %s and %s" % (first_user, second_user))

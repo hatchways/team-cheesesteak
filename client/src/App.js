@@ -15,7 +15,7 @@ import TestPage from './pages/test';
 import PageNotFound from './pages/PageNotFound';
 import './App.css';
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import {InboxPage, ConversationPage} from "./pages/Messaging";
 function App() {
   const [user, setUser] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);

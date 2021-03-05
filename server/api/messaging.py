@@ -1,3 +1,4 @@
+import json
 from flask import request, Blueprint, jsonify
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import or_, and_
@@ -6,7 +7,7 @@ from models.user import User
 from db import session
 from .auth import authenticate
 
-messaging_views = Blueprint('messaging', __name__, url_prefix="chat")
+messaging_views = Blueprint('messaging', __name__, url_prefix="/messaging")
 
 @messaging_views.route('/new_message', methods=["POST"])
 @authenticate
@@ -50,7 +51,7 @@ def new_message(**kwargs):
     response_dict['message'] = "Successfully sent message to %s" % (message_info['receiver'].profile.name)
     return jsonify(response_dict), 201
 
-@messaging_views.route('/get_conversation_messages', methods=["GET"])
+@messaging_views.route('/get_conversation_messages', methods=["POST"])
 @authenticate
 def conversation_messages(**kwargs):
     """
@@ -64,14 +65,18 @@ def conversation_messages(**kwargs):
     try:
         # Get the conversation between the two users.
         conversation = Conversation.get_instance(**{'id': request.get_json().get('conversation_id')})
+    except:
+        response_dict['status'] = 404
+        response_dict['message'] = "Cannot find conversation"
+        return jsonify(response_dict), 404
     # Messages in the conversation are already ordered by descending created_at (date/time)
-    for message in conversation.messages.all():
+    for message in conversation.messages:
         message_dict = {
             'sender': message.sender.profile.name,
-            'image_url': profile_image,
+            'image_url': message.sender.profile.profile_image,
             'content': message.content
         }
-        for field, value in message.get_formatted_info:
+        for field, value in message.get_formatted_info.items():
             message_dict[field] = value
         response_dict['messages'].append(message_dict)
     response_dict['other_user_image'] = conversation.get_other_user(user).profile.profile_image
@@ -96,17 +101,19 @@ def get_convo_previews(**kwargs):
     # user id of the other user in the current conversation
     request_dict = request.get_json()
     excluded_user = None
-    if request_dict.get('user_id', None) != None:
-        excluded_user = User.get_instance(**{'id': request_dict.get('user_id')})
+    user = kwargs['user']
+    if request_dict != None:
+        if request_dict.get('user_id', None) != None:
+            excluded_user = User.get_instance(**{'id': request_dict.get('user_id')})
     base_query = session.query(Conversation).filter(or_(
-            user_one=user,
-            user_two=user
+            Conversation.user_one==user,
+            Conversation.user_two==user
         ))
     if excluded_user != None:
         conversations = base_query.filter(
             and_(
-                user_one!=excluded_user,
-                user_two!=excluded_user
+                Conversation.user_one!=excluded_user,
+                Conversation.user_two!=excluded_user
             )
         ).all()
     else:
@@ -116,19 +123,19 @@ def get_convo_previews(**kwargs):
         response_dict['message'] = "No conversations yet"
         return jsonify(response_dict), 204
     for conversation in conversations:
-        newest_message = conversation.messages.first()
-        sender_profile = newest_message.sender.profile
-        if sender_profile.id != user.profile.id:
-            other_user_name = sender_profile.name
-        else:
-            other_user_name = newest_message.receiver.profile.name
+        newest_message = conversation.messages[0]
+        other_user = conversation.get_other_user(user)
+        other_user_profile = other_user.profile
+
         message_info = {
-            'name': other_user_name,
+            'conversation_id': conversation.id,
+            'name': other_user_profile.name,
             'image_url': other_user_profile.profile_image,
             'content': newest_message.content,
             'created_at': newest_message.get_formatted_time
         }
         response_dict['messages'].append(message_info)
+    response_dict['status'] = 200
     return jsonify(response_dict), 200
 
 @messaging_views.route("/delete", methods=["GET"])
