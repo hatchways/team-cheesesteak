@@ -15,7 +15,7 @@ import TestPage from './pages/test';
 import PageNotFound from './pages/PageNotFound';
 import './App.css';
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import {InboxPage, ConversationPage} from "./pages/Messaging";
 function App() {
   const [user, setUser] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
@@ -26,13 +26,16 @@ function App() {
           <Switch>
             <ProtectedRoute path="/chef_profile" component={ChefProfile} />
             <ProtectedRoute path="/user_profile" component={ProfilePage} />
+            <ProtectedRoute path="/inbox" component={InboxPage} />
+            <ProtectedRoute
+                path="/conversation"
+                component={ConversationPage}
+              />
             <Route path="/signin" component={SignInPage} />
+            <Redirect from="/" to="/signin"/>
             <Route path="/signup" component={SignUpPage} />
             <Route path="/test" component={TestPage} />
             <Route component={PageNotFound} />
-            <Route exact path="/">
-              <Redirect to="/signin" />
-            </Route>
           </Switch>
         </BrowserRouter>
       </UserProvider>

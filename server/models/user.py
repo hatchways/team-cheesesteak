@@ -14,6 +14,8 @@ from models.base_model import Base, BaseModelMixin
 # the database
 from models.recipe import Recipe
 from models.profile import Profile
+from models.message import Message
+from models.notification import Notification
 from config import API_KEY
 from handlers.GoogleAPIHandler import GoogleAPIHandler
 import requests
@@ -36,7 +38,6 @@ class User(Base, BaseModelMixin):
     password_hash = Column(String(128), nullable=False)
 
     # Relationships
-    notifications = relationship("Notification", backref="user", cascade="all, delete-orphan")
     # This requires the Profile model to link back to the user model
     profile = relationship("Profile", uselist=False, backref="user", cascade="all, delete-orphan")
 
