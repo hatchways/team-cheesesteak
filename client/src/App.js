@@ -9,6 +9,7 @@ import { UserProvider } from './context/User';
 import './App.css';
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import {InboxPage, ConversationPage} from "./pages/Messaging";
 import SignInPage from './pages/SignIn';
 import SignUpPage from './pages/SignUp';
 import ChefProfilePage from "./pages/ChefProfile";
@@ -26,7 +27,13 @@ function App() {
           <Switch>
             <ProtectedRoute path="/chef_profile" component={ChefProfilePage} />
             <ProtectedRoute path="/user_profile" component={ProfilePage} />
+            <ProtectedRoute path="/inbox" component={InboxPage} />
+            <ProtectedRoute
+                path="/conversation"
+                component={ConversationPage}
+              />
             <Route path="/signin" component={SignInPage} />
+            <Redirect from="/" to="/signin"/>
             <Route path="/signup" component={SignUpPage} />
             <Route path="/upload" component={UploadPage} />
             <Route component={PageNotFound} />

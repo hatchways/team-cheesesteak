@@ -140,6 +140,8 @@ function TopBar(props) {
 							onClose={handleClose}
 						>
 							<MenuItem onClick={handleClose}><Link to='/profile' className={classes.AppBarLink}>Profile</Link></MenuItem>
+							<MenuItem onClick={handleClose}><Link to='/inbox' className={classes.AppBarLink}>Inbox</Link></MenuItem>
+
 							<MenuItem onClick={() => {
 								fetch("/auth/logout");
 								setUser(null);

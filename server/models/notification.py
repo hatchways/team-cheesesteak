@@ -1,4 +1,4 @@
-from datetime.datetime import now, strftime
+from datetime import datetime
 from sqlalchemy import (
     Column, String,
     Integer, ForeignKey,
@@ -47,7 +47,7 @@ class Notification(Base, BaseModelMixin):
     notif_type = Column(String(60), nullable=False)
     # This may cause problems so it will need tested before
     # being used
-    created_at = Column(DateTime, default=now)
+    created_at = Column(DateTime, default=datetime.now)
     read = Column(Boolean, default=False)
 
     def get_date_time(self):

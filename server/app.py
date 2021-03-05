@@ -7,6 +7,7 @@ from api.upload_image_handler import upload_image_handler
 
 from api.auth import auth_views
 from api.search import search_views
+from api.messaging import messaging_views
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('flask_secret_key')
@@ -33,5 +34,6 @@ app.register_blueprint(home_handler)
 app.register_blueprint(map_handler)
 app.register_blueprint(upload_image_handler)
 
+app.register_blueprint(messaging_views)
 app.register_blueprint(auth_views)
 app.register_blueprint(search_views)
