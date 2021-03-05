@@ -6,16 +6,15 @@ import { theme } from './themes/theme';
 
 import { UserProvider } from './context/User';
 
-
-import ChefProfilePage from "./pages/ChefProfile";
-import UploadPage from "./pages/Upload";
-import ProfilePage from './pages/UserProfile';
-import SignUpPage from './pages/SignUp';
-import SignInPage from './pages/SignIn';
-import TestPage from './pages/test';
-import PageNotFound from './pages/PageNotFound';
 import './App.css';
+
 import ProtectedRoute from "./components/ProtectedRoute";
+import SignInPage from './pages/SignIn';
+import SignUpPage from './pages/SignUp';
+import ChefProfilePage from "./pages/ChefProfile";
+import ProfilePage from './pages/UserProfile';
+import UploadPage from "./pages/Upload";
+import PageNotFound from './pages/PageNotFound';
 
 function App() {
   const [user, setUser] = useState("");
@@ -29,7 +28,6 @@ function App() {
             <ProtectedRoute path="/user_profile" component={ProfilePage} />
             <Route path="/signin" component={SignInPage} />
             <Route path="/signup" component={SignUpPage} />
-            <Route path="/test" component={TestPage} />
             <Route path="/upload" component={UploadPage} />
             <Route component={PageNotFound} />
             <Route exact path="/">
