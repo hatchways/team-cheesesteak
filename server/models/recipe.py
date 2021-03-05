@@ -51,6 +51,14 @@ class Recipe(Base, BaseModelMixin):
     required_items = Column(Text)
     image_urls = Column(Text, nullable=False)
 
+    def get_formatted_info(self):
+        info_dict = {}
+        info_dict['price'] = self.get_formatted_price
+        info_dict['image_urls'] = self.get_image_url_list
+        info_dict['ingredients'] = self.get_ingredients_list
+        info_dict['required_items'] = self.get_utensil_list
+        return info_dict
+
     @validates('price')
     def validate_price(self, key, price):
         if not isinstance(price, int):
@@ -145,7 +153,6 @@ class Recipe(Base, BaseModelMixin):
     @property
     def get_utensil_list(self):
         return self.required_items.split(',')
-
 
     def __repr__(self):
         """
