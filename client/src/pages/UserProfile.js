@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
   },
   cardSendMessage: {
     border: "2px solid #FF510C",
-    color: theme.light,
+    color: theme.orange,
     borderRadius: "0",
     paddingTop: "1em",
     paddingBottom: "1em",
@@ -112,7 +112,7 @@ const useStyles = makeStyles(theme => ({
     height: '2em',
     width: 'fit-content',
     ['@media (max-width:800px)']: { width: 'fit-content' },
-    background: theme.main,
+    background: theme.lightOrange,
     marginRight: '0.75em',
     marginTop: '0.75em',
   },

@@ -10,12 +10,12 @@ import ProfilePage from './pages/UserProfile';
 import ChefProfile from './pages/ChefProfile';
 import SignUpPage from './pages/SignUp';
 import SignInPage from './pages/SignIn';
-import TestPage from './pages/Test';
-import CheckoutPage from './pages/Checkout';
 import PageNotFound from './pages/PageNotFound';
 import './App.css';
 import ProtectedRoute from "./components/ProtectedRoute";
-import Checkout from "./pages/Checkout";
+import CheckoutPage from "./pages/Checkout";
+import CheckoutSuccessPage from "./pages/CheckoutSuccess";
+import CheckoutCanceledPage from "./pages/CheckoutCanceled";
 
 function App() {
   const [user, setUser] = useState("");
@@ -27,8 +27,9 @@ function App() {
           <Switch>
             <ProtectedRoute path="/chef_profile" component={ChefProfile} />
             <ProtectedRoute path="/user_profile" component={ProfilePage} />
-            <ProtectedRoute path="/test" component={TestPage} />
             <ProtectedRoute path="/checkout" component={CheckoutPage} />
+            <ProtectedRoute path="/checkout-success" component={CheckoutSuccessPage} />
+            <ProtectedRoute path="/checkout-canceled" component={CheckoutCanceledPage} />
             <Route path="/signin" component={SignInPage} />
             <Route path="/signup" component={SignUpPage} />
             <Route component={PageNotFound} />

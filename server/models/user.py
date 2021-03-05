@@ -14,6 +14,7 @@ from models.base_model import Base, BaseModelMixin
 # the database
 from models.recipe import Recipe
 from models.profile import Profile
+from models.stripe import Stripe
 from config import API_KEY
 from handlers.GoogleAPIHandler import GoogleAPIHandler
 import requests
@@ -31,6 +32,12 @@ class User(Base, BaseModelMixin):
     country = Column(String(30), default="Not entered")
     zip_code = Column(String(12), default="Not entered")
 
+    #card info
+    # stripe_customer_id = Column(Integer, default=0)
+    # card_number = Column(String(16), default='2424242424242424')
+    # card_expiry = Column(String(4), default='0721')
+    # card_ccv = Column(String(3), default='117')
+
     # Auth
     email = Column(String(150), index=True, unique=True, nullable=False)
     password_hash = Column(String(128), nullable=False)
@@ -38,6 +45,9 @@ class User(Base, BaseModelMixin):
     # Relationships
     # This requires the Profile model to link back to the user model
     profile = relationship("Profile", uselist=False, backref="user", cascade="all, delete-orphan")
+    # Relationships
+    # This requires the Stripe model to link back to the user model
+    # profile = relationship("Stripe", uselist=False, backref="user", cascade="all, delete-orphan")
 
     def set_password(self, password):
         if not password:
@@ -101,6 +111,15 @@ class User(Base, BaseModelMixin):
         123 Main Street, Columbus, Ohio, United States, 45796
         """
         return "%s, %s, %s, %s" % (self.get_street_and_city, self.state_or_province, self.country, self.zip_code)
+    # Properties
+
+    @property
+    def get_card_info(self):
+        """
+        Return a full address for the user such as...
+        123 Main Street, Columbus, Ohio, United States, 45796
+        """
+        return self.card_number, self.card_expiry, self.card_ccv
 
     @property
     def get_street_and_city(self):

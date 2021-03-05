@@ -1,7 +1,6 @@
 import os
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from api.ping_handler import ping_handler
 from api.home_handler import home_handler
 from api.map_handler import map_handler
 from api.tests import test_handler
@@ -32,7 +31,6 @@ app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 jwt = JWTManager(app)
 
 app.register_blueprint(home_handler)
-app.register_blueprint(ping_handler)
 app.register_blueprint(map_handler)
 app.register_blueprint(test_handler)
 app.register_blueprint(stripe_handler)

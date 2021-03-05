@@ -1,6 +1,5 @@
 
 import json
-import smtplib
 import requests
 from flask import jsonify, request, Blueprint
 from config import API_KEY

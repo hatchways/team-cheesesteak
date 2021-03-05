@@ -24,7 +24,7 @@ import Logo from '../Assets/images/Logo.png'
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		flexGrow: 1,
+		flexGrow: 1
 	},
 	menuButton: {
 		marginRight: theme.spacing(2),
@@ -104,7 +104,7 @@ function TopBar(props) {
 
 	return (
 		<Grid className={classes.root}>
-			<AppBar position="static" className={classes.AppBar}>
+			<AppBar position="sticky" className={classes.AppBar}>
 				<Toolbar>
 					<Grid className={classes.title}>
 						<Link to='/' className={classes.AppBarLink}>
