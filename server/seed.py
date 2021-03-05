@@ -82,6 +82,15 @@ def seed_database(debug=False):
     user_dicts =[
         {
             'street_address': "777 Brockton Avenue",
+            'city': "Mishawaka",
+            "state_or_province": "Indana",
+            'country': "United States",
+            'zip_code': "46545",
+            'email': "deepSigh123@gmail.com",
+            'password': "Testing123",
+        },
+        {
+            'street_address': "777 Brockton Avenue",
             'city': "Abington",
             "state_or_province": "Massachusetts",
             'country': "United States",
@@ -110,6 +119,15 @@ def seed_database(debug=False):
         },
     ]
     profile_dicts = [
+        {
+            'name': "Alexander",
+            'is_chef': True,
+            'about_me': "I am nothing but a testing account, I do nothing, say nothing and see nothing....but food is indeed delicious",
+            'location': "Mishawaka, United States",
+            'profile_image': "https://images.unsplash.com/photo-1595347097560-69238724e7bd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
+            'favourite_recipe': "Shepherds Pie,",
+            'favourite_cuisine': "french,"
+        },
         {
             'name': "Giuseppe",
             "is_chef": True,
@@ -203,6 +221,9 @@ def seed_database(debug=False):
         user['latitude'] = geocode.get('lat')
         user['longitude'] = geocode.get('lng')
 
+    conversations_info = []
+    users = []
+    conversations = []
     last_user = None
     for index in range(len(user_dicts)):
         new_user = User.create(**user_dicts[index])
@@ -212,29 +233,52 @@ def seed_database(debug=False):
 
             # Assign the new profile to the new user
         new_user.assign_one_to_one('profile', new_profile)
-
-        # If we have another user, create messages between the
-        # last one and the new one
         if last_user != None:
-            new_conversation = Conversation.create(**{
-                'user_one': last_user,
-                'user_two': new_user
-            })
-            # Create messages for the two users
-            last_users_message = Message.create(**{
-                'sender': last_user,
-                'content': "Hello %s how are you?" % (new_user.profile.name)
-            })
-            new_users_message = Message.create(**{
-                'sender': new_user,
-                'content': "I'm good %s how about you?" % (last_user.profile.name)
-            })
-            # Add messages to the conversation
-            new_conversation.add_to_relationship('messages', last_users_message)
-            new_conversation.add_to_relationship('messages', new_users_message)
-            # Create 5 recipes for each user/profile
-        new_recipe = Recipe.create(**recipe_dicts[index])
+            conversations_info.append(
+                {
+                    'user_one': last_user,
+                    'user_two': new_user
+                }
+            )
+        if new_profile.is_chef:
+            new_recipe = Recipe.create(**recipe_dicts[index])
                 # Add the new recipe to the One to Many field in the Profile model
-        new_profile.add_to_relationship('recipes', new_recipe)
+            new_profile.add_to_relationship('recipes', new_recipe)
+
+        users.append(new_user)
         last_user = new_user
+    
+    # Create conversations and their messages
+    conversations_info.append(
+        {
+            'user_one': users[-1],
+            'user_two': users[0]
+        }
+    )
+    for info in conversations_info:
+        new_conversation = Conversation.create(**info)
+        conversations.append(new_conversation)
+    for conversation in conversations:
+        user_one_message = Message.create(
+            **{
+                'sender': conversation.user_one,
+                'content': "Hello %s how are you today?" % (conversation.user_two.profile.name)
+            }
+        )
+        user_two_message = Message.create(
+            **{
+                'sender': conversation.user_two,
+                'content': "I'm good how are you %s" % (conversation.user_one.profile.name)
+            }
+        )
+        conversation.add_to_relationship('messages', user_one_message)
+        conversation.add_to_relationship('messages', user_two_message)
+    # Debug loop
+    for conversation in conversations:
+        print(
+            "\n\nConversation between",
+            conversation.user_one, conversation.user_two,"\n",
+            "conversation id:", conversation.id,"\n",
+            "Messages in conversation:", conversation.messages,"\n"
+        )
     print_info(user_dicts, profile_dicts, recipe_dicts)

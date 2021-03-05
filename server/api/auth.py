@@ -27,11 +27,18 @@ def authenticate(view):
         if user_id is None:
             response_dict['status'] = 401
             response_dict['message'] = "You have to be logged in for that"
+            print(json.dumps(response_dict, indent=4))
             return jsonify(response_dict), 401
         # Then validate the token
         try:
-            # Try and add the user to the kwargs
             user = User.get_instance(**{'id': int(user_id)})
+        except NoResultFound as e:
+            response_dict['status'] = 404
+            response_dict['message'] = "%s" % (e)
+            print(json.dumps(response_dict, indent=4))
+            return jsonify(response_dict), 404
+        try:
+            # Try and add the user to the kwargs
             kwargs['user'] = user
             # This will raise an error if the token
             # is not valid is some way
@@ -39,6 +46,7 @@ def authenticate(view):
         except:
             response_dict['status'] = 401
             response_dict['message'] = "Invalid token"
+            print(json.dumps(response_dict, indent=4))
             return jsonify(response_dict), 401
         return view(*args, **kwargs)
     return decorated_function
@@ -123,7 +131,17 @@ def get_user_info():
     response_dict = {}
     user_id = request.cookies.get('user_id', None)
     if user_id != None:
-        user = User.get_instance(**{'id': int(user_id)})
+        try:
+            user = User.get_instance(**{'id': int(user_id)})
+        except NoResultFound:
+            # Fix error caused by messed up id
+            response_dict['redirect'] = True
+            response = jsonify(response_dict)
+            response.set_cookie("user_id", "", expires=0)
+            # Remove cookies and clear the session
+            unset_jwt_cookies(response)
+            session.clear()
+            return response, 401
         response_dict['user'] = user.to_dict(excludes=['profile', 'password_hash'])
         response_dict['user']['profile'] = user.profile.to_dict(excludes=["recipes", "user", 'user_id'])
         return jsonify(response_dict), 200
