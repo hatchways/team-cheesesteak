@@ -26,6 +26,11 @@ function App() {
           <Switch>
             <ProtectedRoute path="/chef_profile" component={ChefProfile} />
             <ProtectedRoute path="/user_profile" component={ProfilePage} />
+            <ProtectedRoute path="/inbox" component={InboxPage} />
+            <ProtectedRoute
+                path="/conversation"
+                component={ConversationPage}
+              />
             <Route path="/signin" component={SignInPage} />
             <Route path="/signup" component={SignUpPage} />
             <Route path="/test" component={TestPage} />
