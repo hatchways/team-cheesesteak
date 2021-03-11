@@ -23,7 +23,7 @@ You MUST import Base (declarative_base) from models.base_model because Base will
 After all objects are created in the database, this will print out all the data that was used to create the instances so you can use it in any search functions you may create or any other areas that need testing.
 Here's an example of the output (shortened)
 
-=========Users=========
+=========Users=========<br>
 id: 37
 username: imAchef
 email: imAchef@gmail.com
