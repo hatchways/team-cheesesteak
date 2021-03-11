@@ -24,63 +24,64 @@ After all objects are created in the database, this will print out all the data 
 Here's an example of the output (shortened)
 
 =========Users=========<br>
-id: 37
-username: imAchef
-email: imAchef@gmail.com
-zip_code: 45698
-
-
-=========Profiles=========
-id: 37
-user_id: 38
-name: Alexander
-is_chef: True
-
-
-=========Recipes=========
-id: 91
-profile_id: 37
-name: Roasted Potatoes with Barbeque Chicken
-cuisine: moroccan
-price: 43700
-=========Recipes=========
-id: 91
-profile_id: 37
-name: XGzwPTgIQyuvUenKRYOyVoRsz
-cuisine: moroccan
-price: 43700
-
-
-id: 92
-profile_id: 37
-name: ziFzIVfvIFDVDpgiVzSBIJsxX
-cuisine: moroccan
-price: 54500
-
-
-id: 93
-profile_id: 37
-name: OKWVDsqsdxznQmTyfLRIRqTGl
-cuisine: spanish
-price: 67700
-
-
-id: 94
-profile_id: 37
-name: DKaKJxYErixqzkDSoUoPagYDQ
-cuisine: indian
-price: 71300
-
-
-id: 95
-profile_id: 37
-name: puJLpqXifGkDiqrEeLCsTCMOB
-cuisine: moroccan
-price: 86500
-
-
-id: 96
-profile_id: 37
-name: cyYazQVMfVjjVbBSiMPZFOxhA
-cuisine: indian
-price: 69300
+id: 37<br>
+username: imAchef<br>
+email: imAchef@gmail.com<br>
+zip_code: 45698<br>
+<br>
+<br>
+=========Profiles=========<br>
+id: 37<br>
+user_id: 38<br>
+name: Alexander<br>
+is_chef: True<br>
+<br>
+<br>
+=========Recipes=========<br>
+id: 91<br>
+profile_id: 37<br>
+name: Roasted Potatoes with Barbeque Chicken<br>
+cuisine: moroccan<br>
+price: 43700<br>
+=========Recipes=========<br>
+id: 91<br>
+profile_id: 37<br>
+name: Some moroccan meal<br>
+cuisine: moroccan<br>
+price: 43700<br>
+<br>
+<br>
+id: 92<br>
+profile_id: 37<br>
+name: Another Moroccan meal<br>
+cuisine: moroccan<br>
+price: 54500<br>
+<br>
+<br>
+id: 93<br>
+profile_id: 37<br>
+name: Some Spanish mean<br>
+cuisine: spanish<br>
+price: 67700<br>
+<br>
+<br>
+id: 94<br>
+profile_id: 37<br>
+name: Something probably containing curry<br>
+cuisine: indian<br>
+price: 71300<br>
+<br>
+<br>
+id: 95<br>
+profile_id: 37<br>
+name: Yet another moroccan meal<br>
+cuisine: moroccan<br>
+price: 86500<br>
+<br>
+<br>
+id: 96<br>
+profile_id: 37<br>
+name: Some random indian meal<br>
+cuisine: indian<br>
+price: 69300<br>
+<br>
