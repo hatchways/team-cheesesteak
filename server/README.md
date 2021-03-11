@@ -43,45 +43,10 @@ profile_id: 37<br>
 name: Roasted Potatoes with Barbeque Chicken<br>
 cuisine: moroccan<br>
 price: 43700<br>
-=========Recipes=========<br>
+<br>
 id: 91<br>
 profile_id: 37<br>
 name: Some moroccan meal<br>
 cuisine: moroccan<br>
 price: 43700<br>
-<br>
-<br>
-id: 92<br>
-profile_id: 37<br>
-name: Another Moroccan meal<br>
-cuisine: moroccan<br>
-price: 54500<br>
-<br>
-<br>
-id: 93<br>
-profile_id: 37<br>
-name: Some Spanish mean<br>
-cuisine: spanish<br>
-price: 67700<br>
-<br>
-<br>
-id: 94<br>
-profile_id: 37<br>
-name: Something probably containing curry<br>
-cuisine: indian<br>
-price: 71300<br>
-<br>
-<br>
-id: 95<br>
-profile_id: 37<br>
-name: Yet another moroccan meal<br>
-cuisine: moroccan<br>
-price: 86500<br>
-<br>
-<br>
-id: 96<br>
-profile_id: 37<br>
-name: Some random indian meal<br>
-cuisine: indian<br>
-price: 69300<br>
 <br>
